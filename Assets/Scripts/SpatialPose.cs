@@ -3,21 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class SpatialPose : MonoBehaviour
+public static class SpatialPose
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-	public int a3spatialPoseConvert(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
+	public static int a3spatialPoseConvert(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
         Matrix4x4 Rx, Ry, Rz, R;
         Rx.m00 = Mathf.Sin(Mathf.Deg2Rad * spatialPose.rotate.x);
@@ -32,7 +20,7 @@ public class SpatialPose : MonoBehaviour
 		
 	}
 
-	public int a3spatialPoseRestore(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
+	public static int a3spatialPoseRestore(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
         spatialPose.translate = spatialPose.transformMat.GetColumn(3);
 		spatialPose.rotate = spatialPose.transformMat.rotation.eulerAngles;
@@ -40,7 +28,7 @@ public class SpatialPose : MonoBehaviour
 		return 1;
 	}
 
-    public int a3spatialPoseCopy(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_in)
+    public static int a3spatialPoseCopy(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_in)
 	{
 		spatialPose_out.rotate = spatialPose_in.rotate;
 		spatialPose_out.translate = spatialPose_in.translate;
@@ -48,7 +36,7 @@ public class SpatialPose : MonoBehaviour
 		return 0;
 	}
 
-	public int a3spatialPoseConcat(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_lhs, a3_SpatialPose spatialPose_rhs)
+	public static int a3spatialPoseConcat(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_lhs, a3_SpatialPose spatialPose_rhs)
 	{
 		spatialPose_out.translate = spatialPose_lhs.translate + spatialPose_rhs.translate;
 		spatialPose_out.rotate = spatialPose_lhs.rotate + spatialPose_rhs.rotate;
@@ -56,7 +44,7 @@ public class SpatialPose : MonoBehaviour
 		return 1;
 	}
 
-    public int a3spatialPoseDeconcat(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_lhs, a3_SpatialPose spatialPose_rhs)
+    public static int a3spatialPoseDeconcat(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_lhs, a3_SpatialPose spatialPose_rhs)
     {
 		spatialPose_out.translate = spatialPose_lhs.translate - spatialPose_rhs.translate;
 		spatialPose_out.rotate = spatialPose_lhs.rotate - spatialPose_rhs.rotate;
@@ -66,7 +54,7 @@ public class SpatialPose : MonoBehaviour
         return 1;
     }
 
-    public int a3spatialPoseLerp(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_0, a3_SpatialPose spatialPose_1, float u)
+    public static int a3spatialPoseLerp(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_0, a3_SpatialPose spatialPose_1, float u)
 	{
 		spatialPose_out.translate = Vector4.Lerp(spatialPose_0.translate, spatialPose_1.translate, u);
 		spatialPose_out.rotate = Vector4.Lerp(spatialPose_0.rotate, spatialPose_1.rotate, u);
