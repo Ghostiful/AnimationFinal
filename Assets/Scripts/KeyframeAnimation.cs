@@ -96,7 +96,7 @@ public class a3_ClipPool
     public int sampleCount;
 }
 
-public class a3_KeyframeAnimation : MonoBehaviour
+public static class a3_KeyframeAnimation
 {
     public static int a3sampleInit(ref a3_Sample sample_out, int time_step, double playback_stepPerSec)
     {
