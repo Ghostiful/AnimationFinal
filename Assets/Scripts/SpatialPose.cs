@@ -62,6 +62,46 @@ public static class SpatialPose
 		return 0;
 	}
 
+	//-----------------------------------------------------------------------------
+
+// set rotation values for a single node pose
+public static int a3spatialPoseSetRotation(a3_SpatialPose spatialPose, int rx_degrees, int ry_degrees, int rz_degrees)
+{
+	spatialPose.rotate.x = rx_degrees;
+	spatialPose.rotate.y = ry_degrees;
+	spatialPose.rotate.z = rz_degrees;
+	return 1;
+}
+
+// scale
+public static int a3spatialPoseSetScale(a3_SpatialPose spatialPose, float sx, float sy, float sz)
+{
+	spatialPose.scale.x = sx;
+	spatialPose.scale.y = sy;
+	spatialPose.scale.z = sz;
+	return 1;
+}
+
+// translation
+public static int a3spatialPoseSetTranslation(a3_SpatialPose spatialPose, float tx, float ty, float tz)
+{
+	spatialPose.translate.x = tx;
+	spatialPose.translate.y = ty;
+	spatialPose.translate.z = tz;
+	return 1;
+}
+
+// reset single node pose
+public static int a3spatialPoseReset(a3_SpatialPose spatialPose)
+{
+	spatialPose.transformMat = Matrix4x4.identity;
+	spatialPose.transformDQ = Quaternion.identity;
+	spatialPose.rotate = Vector4.zero;
+	spatialPose.scale = Vector4.one;
+	spatialPose.translate = new Vector4(0, 0, 0, 1);
+	spatialPose.user = Vector4.zero;
+	return 1;
+}
 }
 
 public struct a3_SpatialPose
