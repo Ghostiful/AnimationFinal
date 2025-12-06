@@ -107,13 +107,11 @@ public static class HierarchyStateBlend
 
     }
 
-    // Helper: Convert Vector4 to float array
     private static float[] GetVector4AsArray(ref Vector4 vec)
     {
         return new float[] { vec.x, vec.y, vec.z, vec.w };
     }
 
-    // Helper: Set Vector4 from float array
     private static void SetVector4FromArray(ref Vector4 vec, float[] array)
     {
         if (array != null && array.Length >= 4)
