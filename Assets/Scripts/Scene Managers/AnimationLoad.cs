@@ -1,0 +1,236 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AnimationLoad : MonoBehaviour
+{
+    [Header("Animation Data")]
+    public bool useCharacter = true;
+    public bool forceDisableStreaming = false;
+
+    [Header("Scene Objects")]
+    public SkinnedMeshRenderer characterRenderer;
+    public Transform cameraTransform;
+    public Transform characterRoot;
+
+    [Header("IK Effectors")]
+    public Transform neckLookAtCtrl;
+    public Transform wristEffectorR;
+    public Transform wristConstraintR;
+    public Transform wristEffectorL;
+    public Transform wristConstraintL;
+    public Transform ankleEffectorR;
+    public Transform ankleConstraintR;
+    public Transform ankleEffectorL;
+    public Transform ankleConstraintL;
+
+    [Header("Animation Clips")]
+    public string[] clipNames = new string[]
+    {
+        "xbot_idle_f",
+        "xbot_idle_m",
+        "xbot_idle_pistol"
+    };
+
+    // Core animation systems
+    private a3_Hierarchy sceneGraph;
+    private a3_HierarchyState sceneGraphState;
+
+    private a3_Hierarchy hierarchy_skel;
+    private a3_HierarchyPoseGroup hierarchyPoseGroup_skel;
+
+    private a3_HierarchyState hierarchyState_skel_ik;
+    private a3_HierarchyState hierarchyState_skel_fk;
+    private a3_HierarchyState hierarchyState_skel_final;
+    private a3_HierarchyState hierarchyState_skel_base;
+
+    // Blend tree states
+    private a3_Hierarchy blendTree;
+    private a3_HierarchyState[] hierarchyState_skel_blend;
+
+    // Clip controllers
+    private a3_ClipController clipCtrl_idle_f;
+    private a3_ClipController clipCtrl_idle_m;
+    private a3_ClipController clipCtrl_idle_p;
+
+    private a3_ClipPool clipPool;
+
+    // Unity bone mapping
+    private Transform[] boneTransforms;
+    private Dictionary<string, int> boneNameToIndex;
+
+    // Flags
+    public bool isLoaded { get; private set; }
+    private bool streaming;
+
+    void Start()
+    {
+        LoadAnimationSystem();
+    }
+
+    public void LoadAnimationSystem()
+    {
+        // Initialize scene graph
+        InitializeSceneGraph();
+
+        // Initialize skeletal hierarchy
+        InitializeCharacterHierarchy();
+
+        // Initialize animation clips
+        InitializeAnimationClips();
+
+        // Initialize hierarchy states
+        InitializeHierarchyStates();
+
+        // Initialize blend tree
+        InitializeBlendTree();
+
+        isLoaded = true;
+        Debug.Log("Animation system loaded");
+    }
+
+    void InitializeSceneGraph()
+    {
+        const int sceneObjectCount = 24;
+        sceneGraph = a3_Hierarchy.a3hierarchyCreate(sceneObjectCount);
+
+        // Set up scene graph structure
+        sceneGraph.a3hierarchySetNode(0, -1, "scene_world_root");
+
+        sceneGraph.a3hierarchySetNode(1, 0, "scene_skeleton_ctrl");
+        sceneGraph.a3hierarchySetNode(2, 1, "scene_skeleton_rig");
+        sceneGraph.a3hierarchySetNode(3, 2, "scene_skeleton_neckLookat_ctrl");
+        sceneGraph.a3hierarchySetNode(4, 2, "scene_skeleton_wristEff_r_ctrl");
+        sceneGraph.a3hierarchySetNode(5, 2, "scene_skeleton_wristCon_r_ctrl");
+        sceneGraph.a3hierarchySetNode(6, 2, "scene_skeleton_wristEff_l_ctrl");
+        sceneGraph.a3hierarchySetNode(7, 2, "scene_skeleton_wristCon_l_ctrl");
+        sceneGraph.a3hierarchySetNode(8, 2, "scene_skeleton_ankleEff_r_ctrl");
+        sceneGraph.a3hierarchySetNode(9, 2, "scene_skeleton_ankleCon_r_ctrl");
+        sceneGraph.a3hierarchySetNode(10, 2, "scene_skeleton_ankleEff_l_ctrl");
+        sceneGraph.a3hierarchySetNode(11, 2, "scene_skeleton_ankleCon_l_ctrl");
+        sceneGraph.a3hierarchySetNode(12, 1, "scene_skeleton");
+
+        // Create scene graph state
+        sceneGraphState = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(sceneGraphState, sceneGraph);
+    }
+
+    void InitializeCharacterHierarchy()
+    {
+        // Izzy put ur hierarchy loading stuff here
+    }
+
+    void InitializeAnimationClips()
+    {
+        // Calculate required storage
+        int hierarchySampleCount = hierarchyPoseGroup_skel.hposeCount > 0 ? hierarchyPoseGroup_skel.hposeCount : 1;
+        int hierarchyKeyframeCount = hierarchySampleCount - 1;
+
+        // For now, create minimal clip pool for testing
+        // TODO: Load actual clip data from files or Unity AnimationClips
+        clipPool = new a3_ClipPool();
+        a3_KeyframeAnimation.a3clipPoolCreate(clipPool,
+            clipNames.Length, // clip count
+            hierarchyKeyframeCount, // keyframe count
+            hierarchySampleCount); // sample count
+
+        // Initialize placeholder clips
+        const int fps = 24;
+        double playbackRate = (double)fps;
+
+        for (int i = 0; i < clipNames.Length; i++)
+        {
+            // Create sample and keyframe for this clip
+            if (i < clipPool.sampleCount - 1)
+            {
+                a3_Sample sample0 = clipPool.sample[i];
+                a3_Sample sample1 = clipPool.sample[i + 1];
+
+                sample0.index = i;
+                sample1.index = i + 1;
+
+                a3_KeyframeAnimation.a3sampleInit(ref sample0, i * 10, playbackRate);
+                a3_KeyframeAnimation.a3sampleInit(ref sample1, (i + 1) * 10, playbackRate);
+
+                clipPool.sample[i] = sample0;
+                clipPool.sample[i + 1] = sample1;
+
+                if (i < clipPool.keyframeCount)
+                {
+                    a3_Keyframe keyframe = clipPool.keyframe[i];
+                    keyframe.index = i;
+                    a3_KeyframeAnimation.a3keyframeInit(ref keyframe, sample0, sample1, playbackRate);
+                    clipPool.keyframe[i] = keyframe;
+                }
+            }
+
+            if (i < clipPool.clipCount)
+            {
+                a3_Clip clip = clipPool.clip[i];
+                a3_KeyframeAnimation.a3clipInit(clip, clipNames[i],
+                    clipPool.keyframe[0], clipPool.keyframe[clipPool.keyframeCount - 1]);
+                a3_KeyframeAnimation.a3clipCalculateDuration(clipPool, i, playbackRate);
+            }
+        }
+
+        // Initialize controllers
+        clipCtrl_idle_f = new a3_ClipController();
+        clipCtrl_idle_m = new a3_ClipController();
+        clipCtrl_idle_p = new a3_ClipController();
+
+        KeyframeAnimationController.a3clipControllerInit(
+            clipCtrl_idle_f, "ctrl_idle_f", clipPool, 0, fps, playbackRate);
+        KeyframeAnimationController.a3clipControllerInit(
+            clipCtrl_idle_m, "ctrl_idle_m", clipPool, 1, fps, playbackRate);
+        KeyframeAnimationController.a3clipControllerInit(
+            clipCtrl_idle_p, "ctrl_idle_p", clipPool, 2, fps, playbackRate);
+    }
+
+    void InitializeHierarchyStates()
+    {
+        // Base state
+        hierarchyState_skel_base = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_base, hierarchy_skel);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(hierarchyState_skel_base.localSpace, hierarchyPoseGroup_skel.hpose[0], hierarchy_skel.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(hierarchyState_skel_base.localSpace, hierarchy_skel.numNodes, hierarchyPoseGroup_skel.channel, hierarchyPoseGroup_skel.order);
+        a3_Kinematics.a3kinematicsSolveForwardPartial(hierarchyState_skel_base, 0, hierarchy_skel.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateLocalInverse(hierarchyState_skel_base);
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateObjectInverse(hierarchyState_skel_base);
+
+        // FK state
+        hierarchyState_skel_fk = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_fk, hierarchy_skel);
+
+        // IK state
+        hierarchyState_skel_ik = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_ik, hierarchy_skel);
+
+        // Final state
+        hierarchyState_skel_final = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_final, hierarchy_skel);
+    }
+
+    /// <summary>
+    /// Initialize blend tree hierarchy and states
+    /// </summary>
+    void InitializeBlendTree()
+    {
+        // Create blend tree hierarchy
+        blendTree = a3_Hierarchy.a3hierarchyCreate(5);
+        blendTree.a3hierarchySetNode(0, -1, "blendTree_result");
+        blendTree.a3hierarchySetNode(1, 0, "blendTree_idle_fm_blend");
+        blendTree.a3hierarchySetNode(2, 1, "blendTree_idle_f");
+        blendTree.a3hierarchySetNode(3, 1, "blendTree_idle_m");
+        blendTree.a3hierarchySetNode(4, 0, "blendTree_idle_p");
+
+        // Create blend tree states
+        hierarchyState_skel_blend = new a3_HierarchyState[5];
+        for (int i = 0; i < 5; i++)
+        {
+            hierarchyState_skel_blend[i] = new a3_HierarchyState();
+            a3_HierarchyStateFunctions.a3hierarchyStateCreate(
+                hierarchyState_skel_blend[i], hierarchy_skel);
+        }
+    }
+
+}
