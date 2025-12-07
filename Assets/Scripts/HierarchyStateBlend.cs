@@ -143,6 +143,7 @@ public static class HierarchyStateBlend
 
             return 1;
         }
+    }
 }
 
 public delegate float[] a3realOp(float[] v_out, params object[] args);
