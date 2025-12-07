@@ -500,22 +500,29 @@ public static class a3_HierarchyStateFunctions
     }
 
     // still needed - function to load bone transforms as an array from the cat prefab
-    public static int a3hierarchyPoseGroupLoad(a3_HierarchyPoseGroup poseGroup_out, a3_Hierarchy hierarchy_out, Transform[] boneTransforms)
+    public static int a3hierarchyPoseGroupLoad(a3_HierarchyPoseGroup poseGroup_out, a3_Hierarchy hierarchy_out, Bone[] bones)
     {
 
-        hierarchy_out = a3_Hierarchy.a3hierarchyCreate(boneTransforms.Length);
+        hierarchy_out = a3_Hierarchy.a3hierarchyCreate(bones.Length);
 
-        for (int i = 0; i < boneTransforms.Length; i++)
+        for (int i = 0; i < bones.Length; i++)
         {
             hierarchy_out.nodes[i].index = i;
-            hierarchy_out.nodes[i].name = boneTransforms[i].name;
-            hierarchy_out.nodes[i].parentIndex = i - 1; // might need to change this to something else to avoid incorrect parents (several things have hips as a parent)
+            hierarchy_out.nodes[i].name = bones[i].transform.name;
+            hierarchy_out.nodes[i].parentIndex = bones[i].parentIndex; // might need to change this to something else to avoid incorrect parents (several things have hips as a parent)
 
         }
 
         poseGroup_out.hierarchy = hierarchy_out;
         
+        
 
         return 1;
     }
+}
+
+public struct Bone
+{
+    public Transform transform;
+    public int parentIndex;
 }
