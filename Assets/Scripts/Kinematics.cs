@@ -205,4 +205,203 @@ public static class a3_Kinematics
             activeHS.localSpace.poses[nodeIndex],
             baseHS.localSpace.poses[nodeIndex]);
     }
+
+    public static void a3kinematicsUpdateLookAtIK(a3_HierarchyState sceneGraphState,
+            a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup,
+            int sceneGraphIndex_hierarchyObj, int sceneGraphIndex_effector,
+            int hierarchyObjIndex_affected)
+    {
+        Matrix4x4 m_hierarchyObj_4x4 = Matrix4x4.identity;
+        Matrix4x4 m_affected_4x4 = Matrix4x4.identity;
+
+        if ((sceneGraphState == null || activeHS == null || baseHS == null || poseGroup == null) ||
+            (activeHS.hierarchy != baseHS.hierarchy) ||
+            (activeHS.hierarchy != poseGroup.hierarchy))
+            return;
+
+        // need to properly transform joints to their parent frame and vice-versa
+        // get the hierarchy root object transform relative to the rig
+        Matrix4x4 obj2rig = sceneGraphState.localSpace.poses[sceneGraphIndex_hierarchyObj].transformMat;
+        Matrix4x4 rig2obj = sceneGraphState.localSpaceInv.poses[sceneGraphIndex_hierarchyObj].transformMat;
+
+        // affected joint relative to hierarchy
+        Matrix4x4 j2obj_affected = activeHS.objectSpace.poses[hierarchyObjIndex_affected].transformMat;
+
+        // SOLVER
+        {
+            // affected joint relative to rig
+            Matrix4x4 j2rig_affected = obj2rig * j2obj_affected;
+
+            // affected joint position in rig
+            Vector3 affectedPos_rig = j2rig_affected.GetColumn(3);
+
+            // effector locator position in rig
+            Vector3 effectorPos_rig = sceneGraphState.localSpace.poses[sceneGraphIndex_effector].transformMat.GetColumn(3);
+
+            // bases to form
+            Vector3 right = m_hierarchyObj_4x4.GetColumn(0);
+            Vector3 fwd = m_hierarchyObj_4x4.GetColumn(1);
+            Vector3 up = m_hierarchyObj_4x4.GetColumn(2);
+
+            // compute look-at basis
+            {
+                // compute bases
+                fwd = (effectorPos_rig - affectedPos_rig).normalized;
+                right = Vector3.Cross(fwd, up).normalized;
+                up = Vector3.Cross(right, fwd);
+
+                // convert to matrix
+                Matrix4x4 r_affected = Matrix4x4.identity;
+                r_affected.SetColumn(0, new Vector4(right.x, right.y, right.z, 0));
+                r_affected.SetColumn(1, new Vector4(fwd.x, fwd.y, fwd.z, 0));
+                r_affected.SetColumn(2, new Vector4(up.x, up.y, up.z, 0));
+
+                // map to joint orientation
+                Matrix4x4 m_affected_transpose = m_affected_4x4.transpose;
+                r_affected = r_affected * m_affected_transpose;
+
+                // put it back in hierarchy object space
+                j2rig_affected.SetColumn(0, r_affected.GetColumn(0));
+                j2rig_affected.SetColumn(1, r_affected.GetColumn(1));
+                j2rig_affected.SetColumn(2, r_affected.GetColumn(2));
+            }
+
+            j2obj_affected = rig2obj * j2rig_affected;
+        }
+
+        // RESOLVE IK (single-chain)
+        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected, j2obj_affected);
+    }
+
+    public static void a3kinematicsUpdateLimbIK(a3_HierarchyState sceneGraphState,
+        a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup,
+        int sceneGraphIndex_hierarchyObj, int sceneGraphIndex_effector_end, int sceneGraphIndex_constraint,
+        int hierarchyObjIndex_affected_end, int hierarchyObjIndex_affected_hinge, int hierarchyObjIndex_affected_base)
+    {
+        Matrix4x4 m_hierarchyObj_4x4 = Matrix4x4.identity;
+        Matrix4x4 m_affected_end_4x4 = Matrix4x4.identity;
+        Matrix4x4 m_affected_hinge_4x4 = Matrix4x4.identity;
+        Matrix4x4 m_affected_base_4x4 = Matrix4x4.identity;
+
+        if ((sceneGraphState == null || activeHS == null || baseHS == null || poseGroup == null) ||
+            (activeHS.hierarchy != baseHS.hierarchy) ||
+            (activeHS.hierarchy != poseGroup.hierarchy))
+            return;
+
+        // need to properly transform joints to their parent frame and vice-versa
+        // get the hierarchy root object transform relative to the rig
+        Matrix4x4 obj2rig = sceneGraphState.localSpace.poses[sceneGraphIndex_hierarchyObj].transformMat;
+        Matrix4x4 rig2obj = sceneGraphState.localSpaceInv.poses[sceneGraphIndex_hierarchyObj].transformMat;
+
+        // affected joints relative to hierarchy
+        Matrix4x4 j2obj_affected_end = activeHS.objectSpace.poses[hierarchyObjIndex_affected_end].transformMat;
+        Matrix4x4 j2obj_affected_hinge = activeHS.objectSpace.poses[hierarchyObjIndex_affected_hinge].transformMat;
+        Matrix4x4 j2obj_affected_base = activeHS.objectSpace.poses[hierarchyObjIndex_affected_base].transformMat;
+
+        // SOLVER
+        {
+            // affected joints relative to rig
+            Matrix4x4 j2rig_affected_end = obj2rig * j2obj_affected_end;
+            Matrix4x4 j2rig_affected_hinge = obj2rig * j2obj_affected_hinge;
+            Matrix4x4 j2rig_affected_base = obj2rig * j2obj_affected_base;
+
+            // affected joint positions in rig
+            Vector3 affectedPos_end_rig = j2rig_affected_end.GetColumn(3);
+            Vector3 affectedPos_hinge_rig = j2rig_affected_hinge.GetColumn(3);
+            Vector3 affectedPos_base_rig = j2rig_affected_base.GetColumn(3);
+
+            // effector and constraint positions in rig
+            Vector3 effectorPos_end_rig = sceneGraphState.localSpace.poses[sceneGraphIndex_effector_end].transformMat.GetColumn(3);
+            Vector3 constraintPos_rig = sceneGraphState.localSpace.poses[sceneGraphIndex_constraint].transformMat.GetColumn(3);
+
+            // determine if solution exists
+            Vector3 upperDiff = affectedPos_base_rig - affectedPos_hinge_rig;
+            Vector3 lowerDiff = affectedPos_hinge_rig - affectedPos_end_rig;
+            Vector3 effectorDiff = effectorPos_end_rig - affectedPos_base_rig;
+            Vector3 constraintDiff = constraintPos_rig - affectedPos_base_rig;
+            Vector3 normal = Vector3.Cross(constraintDiff, effectorDiff).normalized;
+
+            float upperDist = upperDiff.magnitude;
+            float lowerDist = lowerDiff.magnitude;
+            float effectorDist = effectorDiff.magnitude;
+            effectorDiff = effectorDiff.normalized;
+            float maxDist = upperDist + lowerDist;
+
+            if (effectorDist >= maxDist)
+            {
+                // simple solution: end goes to farthest possible point, hinge also easy to solve
+                affectedPos_end_rig = affectedPos_base_rig + effectorDiff * maxDist;
+                affectedPos_hinge_rig = affectedPos_base_rig + effectorDiff * upperDist;
+            }
+            else
+            {
+                // not-so-simple solution: while wrist position is solved, need elbow
+                // use properties of triangles to get location
+                // area of triangle using Heron's formula
+                float s = 0.5f * (effectorDist + maxDist);
+                float area = Mathf.Sqrt(s * (s - effectorDist) * (s - upperDist) * (s - lowerDist));
+                float height = 2.0f * area / effectorDist;
+                float baseLen = Mathf.Sqrt(upperDist * upperDist - height * height);
+
+                Vector3 offset = Vector3.Cross(effectorDiff, normal) * height;
+                affectedPos_hinge_rig = affectedPos_base_rig + effectorDiff * baseLen + offset;
+                affectedPos_end_rig = effectorPos_end_rig;
+            }
+
+            // bases to form
+            Vector3 right = m_hierarchyObj_4x4.GetColumn(0);
+            Vector3 fwd = m_hierarchyObj_4x4.GetColumn(1);
+
+            // compute base node basis
+            {
+                fwd = (affectedPos_hinge_rig - affectedPos_base_rig).normalized;
+                right = Vector3.Cross(fwd, normal);
+
+                Matrix4x4 r_affected = Matrix4x4.identity;
+                r_affected.SetColumn(0, new Vector4(right.x, right.y, right.z, 0));
+                r_affected.SetColumn(1, new Vector4(fwd.x, fwd.y, fwd.z, 0));
+                r_affected.SetColumn(2, new Vector4(normal.x, normal.y, normal.z, 0));
+
+                Matrix4x4 m_affected_base_transpose = m_affected_base_4x4.transpose;
+                r_affected = r_affected * m_affected_base_transpose;
+
+                j2rig_affected_base.SetColumn(0, r_affected.GetColumn(0));
+                j2rig_affected_base.SetColumn(1, r_affected.GetColumn(1));
+                j2rig_affected_base.SetColumn(2, r_affected.GetColumn(2));
+            }
+
+            // compute hinge node basis
+            {
+                fwd = (affectedPos_end_rig - affectedPos_hinge_rig).normalized;
+                right = Vector3.Cross(fwd, normal);
+
+                Matrix4x4 r_affected = Matrix4x4.identity;
+                r_affected.SetColumn(0, new Vector4(right.x, right.y, right.z, 0));
+                r_affected.SetColumn(1, new Vector4(fwd.x, fwd.y, fwd.z, 0));
+                r_affected.SetColumn(2, new Vector4(normal.x, normal.y, normal.z, 0));
+
+                Matrix4x4 m_affected_hinge_transpose = m_affected_hinge_4x4.transpose;
+                r_affected = r_affected * m_affected_hinge_transpose;
+
+                j2rig_affected_hinge.SetColumn(0, r_affected.GetColumn(0));
+                j2rig_affected_hinge.SetColumn(1, r_affected.GetColumn(1));
+                j2rig_affected_hinge.SetColumn(2, r_affected.GetColumn(2));
+                j2rig_affected_hinge.SetColumn(3, new Vector4(affectedPos_hinge_rig.x, affectedPos_hinge_rig.y, affectedPos_hinge_rig.z, 1));
+            }
+
+            // update end node basis
+            {
+                j2rig_affected_end.SetColumn(3, new Vector4(affectedPos_end_rig.x, affectedPos_end_rig.y, affectedPos_end_rig.z, 1));
+            }
+
+            j2obj_affected_end = rig2obj * j2rig_affected_end;
+            j2obj_affected_hinge = rig2obj * j2rig_affected_hinge;
+            j2obj_affected_base = rig2obj * j2rig_affected_base;
+        }
+
+        // RESOLVE IK (multi-chain: work from root to leaf to get correct transformations)
+        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected_base, j2obj_affected_base);
+        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected_hinge, j2obj_affected_hinge);
+        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected_end, j2obj_affected_end);
+    }
 }
