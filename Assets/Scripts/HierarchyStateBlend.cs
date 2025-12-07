@@ -122,10 +122,52 @@ public static class HierarchyStateBlend
             vec.w = array[3];
         }
     }
+
+    public static int a3SpatialPoseBlendTreeCreate(a3_SpatialPoseBlendTree blendTree, a3_Hierarchy blendTreeDescriptor)
+    {
+        {
+            if (blendTree == null || blendTreeDescriptor == null)
+                return -1;
+
+            blendTree.blendTreeDescriptor = blendTreeDescriptor;
+
+            // Allocate array for nodes
+            int nodeCount = blendTreeDescriptor.numNodes;
+            blendTree.nodes = new a3_SpatialPoseBlendNode[nodeCount];
+
+            // Initialize all nodes (equivalent to memset zero)
+            for (int i = 0; i < nodeCount; i++)
+            {
+                blendTree.nodes[i] = new a3_SpatialPoseBlendNode();
+            }
+
+            return 1;
+        }
 }
 
 public delegate float[] a3realOp(float[] v_out, params object[] args);
 public delegate a3_BlendOp a3blendOpExecute(a3_BlendOp blendOp);
+public delegate float[] a3realOp0C(float[] v_out);
+public delegate float[] a3realOp1C(float[] v_out, float[] v_ctrl0);
+public delegate float[] a3realOp2C(float[] v_out, float[] v_ctrl0, float[] v_ctrl1);
+public delegate float[] a3realOp1C1I(float[] v_out, float[] v_ctrl0, float u0);
+public delegate float[] a3realOp2C1I(float[] v_out, float[] v_ctrl0, float[] v_ctrl1, float u0);
+
+// Wrapper class to hold different operation types
+public class BlendOpWrapper
+{
+    public a3realOp0C op0C;
+    public a3realOp1C op1C;
+    public a3realOp2C op2C;
+    public a3realOp1C1I op1C1I;
+    public a3realOp2C1I op2C1I;
+
+    public BlendOpWrapper(a3realOp0C op) { op0C = op; }
+    public BlendOpWrapper(a3realOp1C op) { op1C = op; }
+    public BlendOpWrapper(a3realOp2C op) { op2C = op; }
+    public BlendOpWrapper(a3realOp1C1I op) { op1C1I = op; }
+    public BlendOpWrapper(a3realOp2C1I op) { op2C1I = op; }
+}
 
 public enum BlendOpLimits
 {
@@ -138,6 +180,7 @@ public class a3_BlendOp
 {
     // Execution function
     public a3blendOpExecute exec;
+    public BlendOpWrapper opWrapper;
 
     // Blend operation function
     public a3realOp op;
