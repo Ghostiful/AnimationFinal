@@ -16,7 +16,7 @@ public static class AnimationUpdate
         }
 
         // Neck look-at
-        a3_Kinematics.a3kinematicsUpdateLookAtIK(sceneGraphState, activeHS, baseHS, poseGroup, 0, 3, activeHS.hierarchy.a3hierarchyGetNodeIndex("neck"));
+        a3_Kinematics.a3kinematicsUpdateLookAtIK(ref sceneGraphState, ref activeHS, ref baseHS, ref poseGroup, 0, 3, activeHS.hierarchy.a3hierarchyGetNodeIndex("neck"));
 
         /// Front Limbs
         // Right
@@ -61,12 +61,28 @@ public static class AnimationUpdate
         return 1;
     }
 
-    public static void UpdateAnimation(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones)
+    public static void UpdateSkeleton(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones)
     {
         for (int i = 0; i < bones.Length; i++)
         {
             bones[i].transform.position = activeHS.animPose.poses[i].translate;
             bones[i].transform.rotation = new Quaternion(activeHS.animPose.poses[i].rotate.x, activeHS.animPose.poses[i].rotate.y, activeHS.animPose.poses[i].rotate.z, 1);
         }
+    }
+
+    public static void DoAnimationPipeline(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState activeHS_fk, ref a3_HierarchyState activeHS_ik, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones)
+    {
+        // add clip controller update here
+        // add blend tree here
+        a3_Kinematics.a3kinematicsUpdateHierarchyStateFK(ref activeHS, ref baseHS, ref poseGroup);
+
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateObjectInverse(activeHS);
+        ApplyEffectors(ref sceneGraphState, ref activeHS, ref baseHS, ref poseGroup);
+
+        //a3_HierarchyStateFunctions.a3hierarchyPoseLerp(ref activeHS.animPose, )
+        // Lerp between fk and ik for final result
+        a3_Kinematics.a3kinematicsUpdateHierarchyStateFK(ref activeHS, ref baseHS, ref poseGroup);
+        a3_Kinematics.a3kinematicsUpdateHierarchyStateSkin(ref activeHS, ref baseHS);
+
     }
 }

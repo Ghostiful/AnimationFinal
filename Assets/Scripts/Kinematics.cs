@@ -7,7 +7,7 @@ public static class a3_Kinematics
     //-----------------------------------------------------------------------------
 
     // single FK helpers
-    private static void a3kinematicsSolveForwardSingle(a3_HierarchyState hierarchyState, int index, int parentIndex)
+    private static void a3kinematicsSolveForwardSingle(ref a3_HierarchyState hierarchyState, int index, int parentIndex)
     {
         // T[this_object] = T[parent_object] * T[this_local]
         hierarchyState.objectSpace.poses[index].transformMat =
@@ -15,7 +15,7 @@ public static class a3_Kinematics
             hierarchyState.localSpace.poses[index].transformMat;
     }
 
-    private static void a3kinematicsSolveForwardRoot(a3_HierarchyState hierarchyState, int index)
+    private static void a3kinematicsSolveForwardRoot(ref a3_HierarchyState hierarchyState, int index)
     {
         // T[root_object] = T[root_local]
         hierarchyState.objectSpace.poses[index].transformMat =
@@ -23,7 +23,7 @@ public static class a3_Kinematics
     }
 
     // partial FK solver
-    public static int a3kinematicsSolveForwardPartial(a3_HierarchyState hierarchyState, int firstIndex, int nodeCount)
+    public static int a3kinematicsSolveForwardPartial(ref a3_HierarchyState hierarchyState, int firstIndex, int nodeCount)
     {
         if (hierarchyState != null && hierarchyState.hierarchy != null &&
             firstIndex < hierarchyState.hierarchy.numNodes && nodeCount > 0)
@@ -42,9 +42,9 @@ public static class a3_Kinematics
             for (int i = firstIndex; i < endIndex; ++i)
             {
                 if (nodes[i].parentIndex >= 0)
-                    a3kinematicsSolveForwardSingle(hierarchyState, nodes[i].index, nodes[i].parentIndex);
+                    a3kinematicsSolveForwardSingle(ref hierarchyState, nodes[i].index, nodes[i].parentIndex);
                 else
-                    a3kinematicsSolveForwardRoot(hierarchyState, nodes[i].index);
+                    a3kinematicsSolveForwardRoot(ref hierarchyState, nodes[i].index);
                 count++;
             }
 
@@ -56,7 +56,7 @@ public static class a3_Kinematics
     //-----------------------------------------------------------------------------
 
     // single IK helpers
-    private static void a3kinematicsSolveInverseSingle(a3_HierarchyState hierarchyState, int index, int parentIndex)
+    private static void a3kinematicsSolveInverseSingle(ref a3_HierarchyState hierarchyState, int index, int parentIndex)
     {
         // T[this_local] = T[parent_object]^-1 * T[this_object]
         hierarchyState.localSpace.poses[index].transformMat =
@@ -64,7 +64,7 @@ public static class a3_Kinematics
             hierarchyState.objectSpace.poses[index].transformMat;
     }
 
-    private static void a3kinematicsSolveInverseRoot(a3_HierarchyState hierarchyState, int index)
+    private static void a3kinematicsSolveInverseRoot(ref a3_HierarchyState hierarchyState, int index)
     {
         // T[root_local] = T[root_object]
         hierarchyState.localSpace.poses[index].transformMat =
@@ -72,7 +72,7 @@ public static class a3_Kinematics
     }
 
     // partial IK solver
-    public static int a3kinematicsSolveInversePartial(a3_HierarchyState hierarchyState, int firstIndex, int nodeCount)
+    public static int a3kinematicsSolveInversePartial(ref a3_HierarchyState hierarchyState, int firstIndex, int nodeCount)
     {
         if (hierarchyState != null && hierarchyState.hierarchy != null &&
             firstIndex < hierarchyState.hierarchy.numNodes && nodeCount > 0)
@@ -91,9 +91,9 @@ public static class a3_Kinematics
             for (int i = firstIndex; i < endIndex; ++i)
             {
                 if (nodes[i].parentIndex >= 0)
-                    a3kinematicsSolveInverseSingle(hierarchyState, nodes[i].index, nodes[i].parentIndex);
+                    a3kinematicsSolveInverseSingle(ref hierarchyState, nodes[i].index, nodes[i].parentIndex);
                 else
-                    a3kinematicsSolveInverseRoot(hierarchyState, nodes[i].index);
+                    a3kinematicsSolveInverseRoot(ref hierarchyState, nodes[i].index);
                 count++;
             }
 
@@ -104,7 +104,7 @@ public static class a3_Kinematics
 
     //-----------------------------------------------------------------------------
 
-    public static void a3kinematicsUpdateHierarchyStateFK(a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup)
+    public static void a3kinematicsUpdateHierarchyStateFK(ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup)
     {
         if (activeHS.hierarchy == baseHS.hierarchy &&
             activeHS.hierarchy == poseGroup.hierarchy)
@@ -126,7 +126,7 @@ public static class a3_Kinematics
                 poseGroup.channel,
                 poseGroup.order);
 
-            a3kinematicsSolveForwardPartial(activeHS, 0, activeHS.hierarchy.numNodes);
+            a3kinematicsSolveForwardPartial(ref activeHS, 0, activeHS.hierarchy.numNodes);
         }
     }
 
@@ -140,7 +140,7 @@ public static class a3_Kinematics
             //	-> restore local-space matrices to poses
             //	-> deconcatenate base pose
 
-            a3kinematicsSolveInversePartial(activeHS, 0, activeHS.hierarchy.numNodes);
+            a3kinematicsSolveInversePartial(ref activeHS, 0, activeHS.hierarchy.numNodes);
 
             a3_HierarchyStateFunctions.a3hierarchyPoseRestore(
                 ref activeHS.hpose[1],
@@ -156,7 +156,7 @@ public static class a3_Kinematics
         }
     }
 
-    public static void a3kinematicsUpdateHierarchyStateSkin(a3_HierarchyState activeHS, a3_HierarchyState baseHS)
+    public static void a3kinematicsUpdateHierarchyStateSkin(ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS)
     {
         if (activeHS.hierarchy == baseHS.hierarchy)
         {
@@ -192,7 +192,7 @@ public static class a3_Kinematics
         activeHS.objectSpaceInv.poses[nodeIndex].transformMat = j2obj.inverse;
 
         // solve LOCAL-SPACE matrix
-        a3kinematicsSolveInverseSingle(activeHS,
+        a3kinematicsSolveInverseSingle(ref activeHS,
             activeHS.hierarchy.nodes[nodeIndex].index,
             activeHS.hierarchy.nodes[nodeIndex].parentIndex);
 
@@ -207,8 +207,8 @@ public static class a3_Kinematics
             baseHS.localSpace.poses[nodeIndex]);
     }
 
-    public static void a3kinematicsUpdateLookAtIK(a3_HierarchyState sceneGraphState,
-            a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup,
+    public static void a3kinematicsUpdateLookAtIK(ref a3_HierarchyState sceneGraphState,
+            ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup,
             int sceneGraphIndex_hierarchyObj, int sceneGraphIndex_effector,
             int hierarchyObjIndex_affected)
     {
