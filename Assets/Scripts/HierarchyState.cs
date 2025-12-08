@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Xml.Schema;
 using UnityEngine;
+using UnityEngine.XR;
 using static UnityEngine.UIElements.VisualElement;
 
 [System.Serializable]
@@ -85,7 +86,7 @@ public class a3_HierarchyState
 
 public static class a3_HierarchyStateFunctions
 {
-    public static int a3hierarchyPoseGroupCreate(a3_HierarchyPoseGroup poseGroup_out, a3_Hierarchy hierarchy, int poseCount)
+    public static int a3hierarchyPoseGroupCreate(ref a3_HierarchyPoseGroup poseGroup_out, ref a3_Hierarchy hierarchy, int poseCount)
     {
         // validate params and initialization states
         if (poseGroup_out != null && hierarchy != null && poseGroup_out.hierarchy == null && hierarchy.nodes != null)
@@ -395,7 +396,7 @@ public static class a3_HierarchyStateFunctions
         return -1;
     }
 
-    public static int a3hierarchyStateCreate(a3_HierarchyState state_out, a3_Hierarchy hierarchy)
+    public static int a3hierarchyStateCreate(ref a3_HierarchyState state_out, ref a3_Hierarchy hierarchy)
     {
         // validate params and initialization states
         if (state_out != null && hierarchy != null && state_out.hierarchy == null && hierarchy.nodes != null)
@@ -500,9 +501,8 @@ public static class a3_HierarchyStateFunctions
     }
 
     // still needed - function to load bone transforms as an array from the cat prefab
-    public static int a3hierarchyPoseGroupLoad(a3_HierarchyPoseGroup poseGroup_out, a3_Hierarchy hierarchy_out, Bone[] bones)
+    public static int a3hierarchyPoseGroupLoad(ref a3_HierarchyPoseGroup poseGroup_out, ref a3_Hierarchy hierarchy_out, Bone[] bones)
     {
-        Debug.Log(bones.Length);
         /// Hierarchy
         hierarchy_out = a3_Hierarchy.a3hierarchyCreate(bones.Length);
 
@@ -513,10 +513,9 @@ public static class a3_HierarchyStateFunctions
             hierarchy_out.nodes[i].parentIndex = bones[i].parentIndex;
 
         }
-        Debug.Log(hierarchy_out.nodes.Length);
 
         /// Hierarchy pose group
-        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(poseGroup_out, hierarchy_out, 6);
+        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref poseGroup_out, ref hierarchy_out, 6);
         // should be happening within the create but isn't for some reason - Izzy
         poseGroup_out.pose = new a3_SpatialPose[bones.Length];
         poseGroup_out.hpose[0].poses = new a3_SpatialPose[bones.Length];
@@ -526,6 +525,22 @@ public static class a3_HierarchyStateFunctions
             poseGroup_out.hpose[0].poses[i].translate = bones[i].transform.position;
             poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.rotation.eulerAngles;
             poseGroup_out.hpose[0].poses[i].scale = bones[i].transform.localScale;
+        }
+
+        return 1;
+    }
+
+    public static int a3hierarchyPoseGroupLoad(ref a3_HierarchyPoseGroup poseGroup_out, ref a3_Hierarchy hierarchy_out)
+    {
+        /// Hierarchy pose group
+        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref poseGroup_out, ref hierarchy_out, 6);
+        // should be happening within the create but isn't for some reason - Izzy
+
+        for (int i = 0; i < hierarchy_out.nodes.Length; i++)
+        {
+            //poseGroup_out.hpose[0].poses[i].translate = hierarchy_out.nodes[i].transform.position;
+            //poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.rotation.eulerAngles;
+            //poseGroup_out.hpose[0].poses[i].scale = bones[i].transform.localScale;
         }
 
         return 1;

@@ -71,6 +71,11 @@ public class AnimationLoad : MonoBehaviour
         LoadAnimationSystem();
     }
 
+    private void Update()
+    {
+        AnimationUpdate.ApplyEffectors(sceneGraphState, hierarchyState_skel_final, hierarchyState_skel_base, hierarchyPoseGroup_skel);
+    }
+
     public void LoadAnimationSystem()
     {
         // Initialize scene graph
@@ -94,8 +99,8 @@ public class AnimationLoad : MonoBehaviour
 
     void InitializeSceneGraph()
     {
-        const int sceneObjectCount = 24;
-        sceneGraph = a3_Hierarchy.a3hierarchyCreate(sceneObjectCount);
+        const int sceneObjectCount = 26;
+        sceneGraph = a3_Hierarchy.a3hierarchyCreate(sceneObjectCount + characterBones.Length);
 
         // Set up scene graph structure
         sceneGraph.a3hierarchySetNode(0, -1, "scene_world_root");
@@ -111,11 +116,20 @@ public class AnimationLoad : MonoBehaviour
         sceneGraph.a3hierarchySetNode(9, 2, "scene_skeleton_ankleCon_r_ctrl");
         sceneGraph.a3hierarchySetNode(10, 2, "scene_skeleton_ankleEff_l_ctrl");
         sceneGraph.a3hierarchySetNode(11, 2, "scene_skeleton_ankleCon_l_ctrl");
-        sceneGraph.a3hierarchySetNode(12, 1, "scene_skeleton");
+        sceneGraph.a3hierarchySetNode(12, 2, "scene_skeleton_tailEff_ctrl");
+        sceneGraph.a3hierarchySetNode(13, 2, "scene_skeleton_tailCon_ctrl");
+        sceneGraph.a3hierarchySetNode(14, 1, "scene_skeleton");
+        for (int i = 0; i < characterBones.Length; i++)
+        {
+            sceneGraph.a3hierarchySetNode(i + 15, characterBones[i].parentIndex + 15, characterBones[i].transform.name);
+        }
+
+        a3_HierarchyPoseGroup scenePoseGroup = new a3_HierarchyPoseGroup();
+        a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(ref scenePoseGroup, ref sceneGraph, characterBones);
 
         // Create scene graph state
         sceneGraphState = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(sceneGraphState, sceneGraph);
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref sceneGraphState, ref sceneGraph);
     }
 
     void InitializeCharacterHierarchy()
@@ -123,7 +137,12 @@ public class AnimationLoad : MonoBehaviour
         // Izzy put ur hierarchy loading stuff here
         hierarchyPoseGroup_skel = new a3_HierarchyPoseGroup();
         hierarchy_skel = new a3_Hierarchy();
-        a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(hierarchyPoseGroup_skel, hierarchy_skel, characterBones);
+        hierarchy_skel = a3_Hierarchy.a3hierarchyCreate(characterBones.Length);
+        a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(ref hierarchyPoseGroup_skel, ref hierarchy_skel, characterBones);
+        hierarchyState_skel_base = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_base, ref hierarchy_skel);
+        hierarchyState_skel_final = new a3_HierarchyState();
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_final, ref hierarchy_skel);
 
     }
 
@@ -197,7 +216,7 @@ public class AnimationLoad : MonoBehaviour
     {
         // Base state
         hierarchyState_skel_base = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_base, hierarchy_skel);
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_base, ref hierarchy_skel);
         a3_HierarchyStateFunctions.a3hierarchyPoseCopy(hierarchyState_skel_base.localSpace, hierarchyPoseGroup_skel.hpose[0], hierarchy_skel.numNodes);
         a3_HierarchyStateFunctions.a3hierarchyPoseConvert(hierarchyState_skel_base.localSpace, hierarchy_skel.numNodes, hierarchyPoseGroup_skel.channel, hierarchyPoseGroup_skel.order);
         a3_Kinematics.a3kinematicsSolveForwardPartial(hierarchyState_skel_base, 0, hierarchy_skel.numNodes);
@@ -206,15 +225,15 @@ public class AnimationLoad : MonoBehaviour
 
         // FK state
         hierarchyState_skel_fk = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_fk, hierarchy_skel);
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_fk, ref hierarchy_skel);
 
         // IK state
         hierarchyState_skel_ik = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_ik, hierarchy_skel);
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_ik, ref hierarchy_skel);
 
         // Final state
         hierarchyState_skel_final = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(hierarchyState_skel_final, hierarchy_skel);
+        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_final, ref hierarchy_skel);
     }
 
     /// <summary>
@@ -236,7 +255,7 @@ public class AnimationLoad : MonoBehaviour
         {
             hierarchyState_skel_blend[i] = new a3_HierarchyState();
             a3_HierarchyStateFunctions.a3hierarchyStateCreate(
-                hierarchyState_skel_blend[i], hierarchy_skel);
+                ref hierarchyState_skel_blend[i], ref hierarchy_skel);
         }
     }
 
