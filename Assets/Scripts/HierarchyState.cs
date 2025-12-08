@@ -535,19 +535,6 @@ public static class a3_HierarchyStateFunctions
 
         return 1;
     }
-
-    public static int a3hierarchyStateLoadPoseGroup(ref a3_HierarchyState hierarchyState_out, a3_HierarchyPoseGroup poseGroup, int numNodes)
-    {
-        for (int i = 0; i < numNodes; i++)
-        {
-            hierarchyState_out.hpose[0].poses[i].translate = poseGroup.hpose[0].poses[i].translate;
-            hierarchyState_out.hpose[0].poses[i].rotate = poseGroup.hpose[0].poses[i].rotate;
-            hierarchyState_out.hpose[0].poses[i].scale = poseGroup.hpose[0].poses[i].scale;
-
-        }
-
-        return 1;
-    }
 }
 
 [System.Serializable]

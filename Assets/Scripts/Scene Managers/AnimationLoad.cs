@@ -213,7 +213,6 @@ public class AnimationLoad : MonoBehaviour
         // Base state
         hierarchyState_skel_base = new a3_HierarchyState();
         a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_base, ref hierarchy_skel);
-        a3_HierarchyStateFunctions.a3hierarchyStateLoadPoseGroup(ref hierarchyState_skel_base, hierarchyPoseGroup_skel, hierarchy_skel.numNodes);
         a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref hierarchyState_skel_base.hpose[1], hierarchyPoseGroup_skel.hpose[0], hierarchy_skel.numNodes);
         a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref hierarchyState_skel_base.hpose[1], hierarchy_skel.numNodes, hierarchyPoseGroup_skel.channel, hierarchyPoseGroup_skel.order);
         a3_Kinematics.a3kinematicsSolveForwardPartial(hierarchyState_skel_base, 0, hierarchy_skel.numNodes);
