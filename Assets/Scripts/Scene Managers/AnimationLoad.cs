@@ -24,6 +24,8 @@ public class AnimationLoad : MonoBehaviour
     public Transform ankleConstraintR;
     public Transform ankleEffectorL;
     public Transform ankleConstraintL;
+    public Transform tailEffector;
+    public Transform tailConstraint;
 
     [Header("Animation Clips")]
     public string[] clipNames = new string[]
