@@ -120,7 +120,7 @@ public static class a3_HierarchyStateFunctions
             }
 
             // reset all data
-            a3_HierarchyStateFunctions.a3hierarchyPoseReset(poseGroup_out.hpose[0], sposeCount);
+            //a3_HierarchyStateFunctions.a3hierarchyPoseReset(ref poseGroup_out.hpose[0], nodeCount);
 
             // Initialize channels and orders with defaults
             for (int i = 0; i < nodeCount; i++)
@@ -312,55 +312,55 @@ public static class a3_HierarchyStateFunctions
         return -1;
     }
 
-    public static int a3hierarchyPoseReset(a3_HierarchyPose pose_inout, int nodeCount)
+    public static int a3hierarchyPoseReset(ref a3_HierarchyPose pose_inout, int nodeCount)
     {
         if (pose_inout != null && nodeCount > 0)
         {
             int i;
-            for (i = 0; i < nodeCount; ++i)
+            for (i = 0; i < nodeCount; i++)
                 SpatialPose.a3spatialPoseReset(pose_inout.poses[i]);
             return i;
         }
         return -1;
     }
 
-    public static int a3hierarchyPoseConvert(a3_HierarchyPose pose_inout, int nodeCount, a3_SpatialPoseChannel[] channel, a3_SpatialPoseEulerOrder[] order)
+    public static int a3hierarchyPoseConvert(ref a3_HierarchyPose pose_inout, int nodeCount, a3_SpatialPoseChannel[] channel, a3_SpatialPoseEulerOrder[] order)
     {
         if (pose_inout != null && nodeCount > 0 && channel != null)
         {
             int i;
-            for (i = 0; i < nodeCount; ++i)
+            for (i = 0; i < nodeCount; i++)
                 SpatialPose.a3spatialPoseConvert(pose_inout.poses[i], channel[i], order[i]);
             return i;
         }
         return -1;
     }
 
-    public static int a3hierarchyPoseRestore(a3_HierarchyPose pose_inout, int nodeCount, a3_SpatialPoseChannel[] channel, a3_SpatialPoseEulerOrder[] order)
+    public static int a3hierarchyPoseRestore(ref a3_HierarchyPose pose_inout, int nodeCount, a3_SpatialPoseChannel[] channel, a3_SpatialPoseEulerOrder[] order)
     {
         if (pose_inout != null && nodeCount > 0 && channel != null)
         {
             int i;
-            for (i = 0; i < nodeCount; ++i)
+            for (i = 0; i < nodeCount; i++)
                 SpatialPose.a3spatialPoseRestore(pose_inout.poses[i], channel[i], order[i]);
             return i;
         }
         return -1;
     }
 
-    public static int a3hierarchyPoseCopy(a3_HierarchyPose pose_out, a3_HierarchyPose pose_in, int nodeCount)
+    public static int a3hierarchyPoseCopy(ref a3_HierarchyPose pose_out, a3_HierarchyPose pose_in, int nodeCount)
     {
         if (pose_out != null && pose_in != null && nodeCount > 0)
         {
             int i;
-            for (i = 0; i < nodeCount; ++i)
+            for (i = 0; i < nodeCount; i++)
                 SpatialPose.a3spatialPoseCopy(pose_out.poses[i], pose_in.poses[i]);
             return i;
         }
         return -1;
     }
 
-    public static int a3hierarchyPoseConcat(a3_HierarchyPose pose_out, a3_HierarchyPose pose_lhs, a3_HierarchyPose pose_rhs, int nodeCount)
+    public static int a3hierarchyPoseConcat(ref a3_HierarchyPose pose_out, a3_HierarchyPose pose_lhs, a3_HierarchyPose pose_rhs, int nodeCount)
     {
         if (pose_out != null && pose_lhs != null && pose_rhs != null && nodeCount > 0)
         {
@@ -372,7 +372,7 @@ public static class a3_HierarchyStateFunctions
         return -1;
     }
 
-    public static int a3hierarchyPoseDeconcat(a3_HierarchyPose pose_out, a3_HierarchyPose pose_lhs, a3_HierarchyPose pose_rhs, int nodeCount)
+    public static int a3hierarchyPoseDeconcat(ref a3_HierarchyPose pose_out, a3_HierarchyPose pose_lhs, a3_HierarchyPose pose_rhs, int nodeCount)
     {
         if (pose_out != null && pose_lhs != null && pose_rhs != null && nodeCount > 0)
         {
@@ -384,7 +384,7 @@ public static class a3_HierarchyStateFunctions
         return -1;
     }
 
-    public static int a3hierarchyPoseLerp(a3_HierarchyPose pose_out, a3_HierarchyPose pose_0, a3_HierarchyPose pose_1, float u, int nodeCount)
+    public static int a3hierarchyPoseLerp(ref a3_HierarchyPose pose_out, a3_HierarchyPose pose_0, a3_HierarchyPose pose_1, float u, int nodeCount)
     {
         if (pose_out != null && pose_0 != null && pose_1 != null && nodeCount > 0)
         {
@@ -428,7 +428,7 @@ public static class a3_HierarchyStateFunctions
             }
 
             // reset all data
-            a3hierarchyPoseReset(state_out.hpose[0], sposeCount);
+            //a3hierarchyPoseReset(ref state_out.hpose[0], nodeCount);
 
             // done
             return 1;
@@ -436,7 +436,7 @@ public static class a3_HierarchyStateFunctions
         return -1;
     }
 
-    public static int a3hierarchyStateRelease(a3_HierarchyState state)
+    public static int a3hierarchyStateRelease(ref a3_HierarchyState state)
     {
         // validate param exists and is initialized
         if (state != null && state.hierarchy != null)

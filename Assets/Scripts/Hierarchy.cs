@@ -48,6 +48,7 @@ public class a3_Hierarchy
 
             hierarchy.nodes[i] = new a3_HierarchyNode(nodeName, i, -1);
         }
+        hierarchy.numNodes = numNodes;
 
         return hierarchy;
     }

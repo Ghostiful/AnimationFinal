@@ -119,13 +119,12 @@ public class AnimationLoad : MonoBehaviour
         sceneGraph.a3hierarchySetNode(12, 2, "scene_skeleton_tailEff_ctrl");
         sceneGraph.a3hierarchySetNode(13, 2, "scene_skeleton_tailCon_ctrl");
         sceneGraph.a3hierarchySetNode(14, 1, "scene_skeleton");
-        for (int i = 0; i < characterBones.Length; i++)
-        {
-            sceneGraph.a3hierarchySetNode(i + 15, characterBones[i].parentIndex + 15, characterBones[i].transform.name);
-        }
+        //for (int i = 0; i < characterBones.Length; i++)
+        //{
+        //    sceneGraph.a3hierarchySetNode(i + 15, characterBones[i].parentIndex + 15, characterBones[i].transform.name);
+        //}
 
-        a3_HierarchyPoseGroup scenePoseGroup = new a3_HierarchyPoseGroup();
-        a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(ref scenePoseGroup, ref sceneGraph, characterBones);
+        
 
         // Create scene graph state
         sceneGraphState = new a3_HierarchyState();
@@ -139,10 +138,7 @@ public class AnimationLoad : MonoBehaviour
         hierarchy_skel = new a3_Hierarchy();
         hierarchy_skel = a3_Hierarchy.a3hierarchyCreate(characterBones.Length);
         a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(ref hierarchyPoseGroup_skel, ref hierarchy_skel, characterBones);
-        hierarchyState_skel_base = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_base, ref hierarchy_skel);
-        hierarchyState_skel_final = new a3_HierarchyState();
-        a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_final, ref hierarchy_skel);
+
 
     }
 
@@ -217,8 +213,8 @@ public class AnimationLoad : MonoBehaviour
         // Base state
         hierarchyState_skel_base = new a3_HierarchyState();
         a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref hierarchyState_skel_base, ref hierarchy_skel);
-        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(hierarchyState_skel_base.localSpace, hierarchyPoseGroup_skel.hpose[0], hierarchy_skel.numNodes);
-        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(hierarchyState_skel_base.localSpace, hierarchy_skel.numNodes, hierarchyPoseGroup_skel.channel, hierarchyPoseGroup_skel.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref hierarchyState_skel_base.hpose[1], hierarchyPoseGroup_skel.hpose[0], hierarchy_skel.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref hierarchyState_skel_base.hpose[1], hierarchy_skel.numNodes, hierarchyPoseGroup_skel.channel, hierarchyPoseGroup_skel.order);
         a3_Kinematics.a3kinematicsSolveForwardPartial(hierarchyState_skel_base, 0, hierarchy_skel.numNodes);
         a3_HierarchyStateFunctions.a3hierarchyStateUpdateLocalInverse(hierarchyState_skel_base);
         a3_HierarchyStateFunctions.a3hierarchyStateUpdateObjectInverse(hierarchyState_skel_base);

@@ -115,13 +115,13 @@ public static class a3_Kinematics
             //	-> perform recursive FK
 
             a3_HierarchyStateFunctions.a3hierarchyPoseConcat(
-                activeHS.localSpace,     // local: goal to calculate
+                ref activeHS.hpose[1],     // local: goal to calculate
                 activeHS.animPose,       // holds current sample pose
                 baseHS.localSpace,       // holds base pose (animPose is all identity poses)
                 activeHS.hierarchy.numNodes);
 
             a3_HierarchyStateFunctions.a3hierarchyPoseConvert(
-                activeHS.localSpace,
+                ref activeHS.hpose[1],
                 activeHS.hierarchy.numNodes,
                 poseGroup.channel,
                 poseGroup.order);
@@ -143,13 +143,13 @@ public static class a3_Kinematics
             a3kinematicsSolveInversePartial(activeHS, 0, activeHS.hierarchy.numNodes);
 
             a3_HierarchyStateFunctions.a3hierarchyPoseRestore(
-                activeHS.localSpace,
+                ref activeHS.hpose[1],
                 activeHS.hierarchy.numNodes,
                 poseGroup.channel,
                 poseGroup.order);
 
             a3_HierarchyStateFunctions.a3hierarchyPoseDeconcat(
-                activeHS.animPose,       // current sample pose: goal to calculate
+                ref activeHS.hpose[1],       // current sample pose: goal to calculate
                 activeHS.localSpace,     // holds local pose
                 baseHS.localSpace,       // holds base pose (animPose is all identity poses)
                 activeHS.hierarchy.numNodes);
