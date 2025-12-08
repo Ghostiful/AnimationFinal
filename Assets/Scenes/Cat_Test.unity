@@ -449,6 +449,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &851076913 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8524164125488844335, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+  m_PrefabInstance: {fileID: 83768267}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &932528450
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,9 +485,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useCharacter: 1
   forceDisableStreaming: 0
-  characterRenderer: {fileID: 0}
+  characterRenderer: {fileID: 851076913}
   cameraTransform: {fileID: 0}
-  characterRoot: {fileID: 0}
+  characterRoot: {fileID: 83768291}
   characterBones:
   - transform: {fileID: 83768290}
     parentIndex: 1
