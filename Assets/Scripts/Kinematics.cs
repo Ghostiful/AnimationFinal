@@ -174,8 +174,8 @@ public static class a3_Kinematics
     //-----------------------------------------------------------------------------
 
     // helper to resolve single-joint IK after solver
-    private static void a3kinematicsResolvePostIK(a3_HierarchyState activeHS,
-            a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup,
+    private static void a3kinematicsResolvePostIK(ref a3_HierarchyState activeHS,
+            ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup,
             int nodeIndex, Matrix4x4 j2obj)
     {
         // post-IK resolution for single affected joint
@@ -270,7 +270,7 @@ public static class a3_Kinematics
         }
 
         // RESOLVE IK (single-chain)
-        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected, j2obj_affected);
+        a3kinematicsResolvePostIK(ref activeHS, ref baseHS, ref poseGroup, hierarchyObjIndex_affected, j2obj_affected);
     }
 
     public static void a3kinematicsUpdateLimbIK(a3_HierarchyState sceneGraphState,
@@ -400,8 +400,8 @@ public static class a3_Kinematics
         }
 
         // RESOLVE IK (multi-chain: work from root to leaf to get correct transformations)
-        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected_base, j2obj_affected_base);
-        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected_hinge, j2obj_affected_hinge);
-        a3kinematicsResolvePostIK(activeHS, baseHS, poseGroup, hierarchyObjIndex_affected_end, j2obj_affected_end);
+        a3kinematicsResolvePostIK(ref activeHS, ref baseHS, ref poseGroup, hierarchyObjIndex_affected_base, j2obj_affected_base);
+        a3kinematicsResolvePostIK(ref activeHS, ref baseHS, ref poseGroup, hierarchyObjIndex_affected_hinge, j2obj_affected_hinge);
+        a3kinematicsResolvePostIK(ref activeHS, ref baseHS, ref poseGroup, hierarchyObjIndex_affected_end, j2obj_affected_end);
     }
 }

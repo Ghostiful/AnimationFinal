@@ -13,7 +13,9 @@ public static class SpatialPose
         Rz.m00 = Mathf.Sin(Mathf.Deg2Rad * spatialPose.rotate.z);
         R.m00 = Rx.m00 * Ry.m00;
         spatialPose.transformMat.m00 = R.m00 * Rz.m00;
-        Matrix4x4 poseMatrix = Matrix4x4.TRS(spatialPose.translate, new Quaternion(spatialPose.rotate.x, spatialPose.rotate.y, spatialPose.rotate.z, spatialPose.rotate.w), spatialPose.scale);
+		Vector4 temp = Vector4.Normalize(spatialPose.rotate);
+
+        Matrix4x4 poseMatrix = Matrix4x4.TRS(spatialPose.translate, new Quaternion(temp.x, temp.y, temp.z, temp.w), spatialPose.scale);
         spatialPose.transformMat = poseMatrix;
 
         return 1;

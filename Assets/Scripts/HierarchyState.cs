@@ -518,8 +518,8 @@ public static class a3_HierarchyStateFunctions
         /// Hierarchy pose group
         a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref poseGroup_out, ref hierarchy_out, 6);
         // should be happening within the create but isn't for some reason - Izzy
-        poseGroup_out.pose = new a3_SpatialPose[bones.Length];
-        poseGroup_out.hpose[0].poses = new a3_SpatialPose[bones.Length];
+        //poseGroup_out.pose = new a3_SpatialPose[bones.Length];
+        //poseGroup_out.hpose[0].poses = new a3_SpatialPose[bones.Length];
 
         for (int i = 0; i < bones.Length; i++)
         {

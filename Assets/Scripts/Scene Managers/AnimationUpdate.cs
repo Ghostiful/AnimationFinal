@@ -9,8 +9,8 @@ public static class AnimationUpdate
         if (sceneGraphState == null || activeHS == null || baseHS == null || poseGroup == null)
         {
             Debug.Assert(sceneGraphState != null);
-            Debug.Assert(activeHS != null);
-            Debug.Assert(baseHS != null);
+            //Debug.Assert(activeHS != null);
+            //Debug.Assert(baseHS != null);
             Debug.Assert(poseGroup != null);
             return -1;
         }
