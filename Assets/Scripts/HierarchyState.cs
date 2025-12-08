@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.XR;
@@ -536,6 +535,28 @@ public static class a3_HierarchyStateFunctions
         a3hierarchyPoseCopy(ref poseGroup_out.hpose[1], poseGroup_out.hpose[0], bones.Length);
         a3hierarchyPoseConvert(ref poseGroup_out.hpose[1], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
 
+        for (int i = 0; i < bones.Length; i++)
+        {
+            if (bones[i].parentIndex == -1)
+            {
+                continue;
+            }
+            SpatialPoseSpaceConverter.ConvertWorldToLocalDirect(ref poseGroup_out.hpose[1].poses[i], ref poseGroup_out.hpose[0].poses[bones[i].parentIndex]);
+        }
+        a3hierarchyPoseConvert(ref poseGroup_out.hpose[1], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
+
+        a3hierarchyPoseCopy(ref poseGroup_out.hpose[2], poseGroup_out.hpose[1], bones.Length);
+        for (int i = 0; i < bones.Length; i++)
+        {
+            if (bones[i].parentIndex == -1)
+            {
+                continue;
+            }
+            SpatialPoseSpaceConverter.ConvertLocalToObjectDirect(ref poseGroup_out.hpose[2].poses[i], ref poseGroup_out.hpose[1].poses[bones[i].parentIndex]);
+        }
+        a3hierarchyPoseConvert(ref poseGroup_out.hpose[2], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
+
+
         return 1;
     }
 }
@@ -545,4 +566,200 @@ public struct Bone
 {
     public Transform transform;
     public int parentIndex;
+}
+
+public static class SpatialPoseSpaceConverter
+{
+    public static a3_SpatialPose ConvertWorldToLocalDirect(ref a3_SpatialPose worldPose, ref a3_SpatialPose parentWorldPose)
+    {
+        a3_SpatialPose localPose = new a3_SpatialPose();
+
+        // Extract parent components
+        Vector3 parentPos = new Vector3(
+            parentWorldPose.translate.x,
+            parentWorldPose.translate.y,
+            parentWorldPose.translate.z
+        );
+        Quaternion parentRot = parentWorldPose.transformDQ;
+        Vector3 parentScale = new Vector3(
+            parentWorldPose.scale.x,
+            parentWorldPose.scale.y,
+            parentWorldPose.scale.z
+        );
+
+        // Extract world components
+        Vector3 worldPos = new Vector3(
+            worldPose.translate.x,
+            worldPose.translate.y,
+            worldPose.translate.z
+        );
+        Quaternion worldRot = worldPose.transformDQ;
+        Vector3 worldScale = new Vector3(
+            worldPose.scale.x,
+            worldPose.scale.y,
+            worldPose.scale.z
+        );
+
+        // Calculate local position
+        // localPos = parentRotInverse * ((worldPos - parentPos) / parentScale)
+        Quaternion parentRotInverse = Quaternion.Inverse(parentRot);
+        Vector3 deltaPos = worldPos - parentPos;
+        Vector3 scaledDelta = new Vector3(
+            deltaPos.x / parentScale.x,
+            deltaPos.y / parentScale.y,
+            deltaPos.z / parentScale.z
+        );
+        Vector3 localPos = parentRotInverse * scaledDelta;
+
+        // Calculate local rotation
+        // localRot = parentRotInverse * worldRot
+        Quaternion localRot = parentRotInverse * worldRot;
+
+        // Calculate local scale
+        // localScale = worldScale / parentScale
+        Vector3 localScale = new Vector3(
+            worldScale.x / parentScale.x,
+            worldScale.y / parentScale.y,
+            worldScale.z / parentScale.z
+        );
+
+        // Build local pose
+        localPose.translate = new Vector4(localPos.x, localPos.y, localPos.z, 0f);
+        localPose.transformDQ = localRot;
+        localPose.rotate = new Vector4(localRot.x, localRot.y, localRot.z, localRot.w);
+        localPose.scale = new Vector4(localScale.x, localScale.y, localScale.z, 1f);
+        localPose.transformMat = Matrix4x4.TRS(localPos, localRot, localScale);
+        localPose.user = worldPose.user;
+
+        return localPose;
+    }
+
+    public static a3_SpatialPose ConvertLocalToWorldDirect(
+        a3_SpatialPose localPose,
+        a3_SpatialPose parentWorldPose)
+    {
+        a3_SpatialPose worldPose = new a3_SpatialPose();
+
+        // Extract parent components
+        Vector3 parentPos = new Vector3(
+            parentWorldPose.translate.x,
+            parentWorldPose.translate.y,
+            parentWorldPose.translate.z
+        );
+        Quaternion parentRot = parentWorldPose.transformDQ;
+        Vector3 parentScale = new Vector3(
+            parentWorldPose.scale.x,
+            parentWorldPose.scale.y,
+            parentWorldPose.scale.z
+        );
+
+        // Extract local components
+        Vector3 localPos = new Vector3(
+            localPose.translate.x,
+            localPose.translate.y,
+            localPose.translate.z
+        );
+        Quaternion localRot = localPose.transformDQ;
+        Vector3 localScale = new Vector3(
+            localPose.scale.x,
+            localPose.scale.y,
+            localPose.scale.z
+        );
+
+        // Calculate world position
+        // worldPos = parentPos + parentRot * (localPos * parentScale)
+        Vector3 scaledLocal = new Vector3(
+            localPos.x * parentScale.x,
+            localPos.y * parentScale.y,
+            localPos.z * parentScale.z
+        );
+        Vector3 worldPos = parentPos + (parentRot * scaledLocal);
+
+        // Calculate world rotation
+        // worldRot = parentRot * localRot
+        Quaternion worldRot = parentRot * localRot;
+
+        // Calculate world scale
+        // worldScale = parentScale * localScale
+        Vector3 worldScale = new Vector3(
+            parentScale.x * localScale.x,
+            parentScale.y * localScale.y,
+            parentScale.z * localScale.z
+        );
+
+        // Build world pose
+        worldPose.translate = new Vector4(worldPos.x, worldPos.y, worldPos.z, 0f);
+        worldPose.transformDQ = worldRot;
+        worldPose.rotate = new Vector4(worldRot.x, worldRot.y, worldRot.z, worldRot.w);
+        worldPose.scale = new Vector4(worldScale.x, worldScale.y, worldScale.z, 1f);
+        worldPose.transformMat = Matrix4x4.TRS(worldPos, worldRot, worldScale);
+        worldPose.user = localPose.user;
+
+        localPose = worldPose;
+        return worldPose;
+    }
+
+    public static a3_SpatialPose ConvertLocalToObjectDirect(ref a3_SpatialPose localPose, ref a3_SpatialPose parentObjectPose)
+    {
+        a3_SpatialPose objectPose = new a3_SpatialPose();
+
+        // Extract parent object components
+        Vector3 parentPos = new Vector3(
+            parentObjectPose.translate.x,
+            parentObjectPose.translate.y,
+            parentObjectPose.translate.z
+        );
+        Quaternion parentRot = parentObjectPose.transformDQ;
+        Vector3 parentScale = new Vector3(
+            parentObjectPose.scale.x,
+            parentObjectPose.scale.y,
+            parentObjectPose.scale.z
+        );
+
+        // Extract local components
+        Vector3 localPos = new Vector3(
+            localPose.translate.x,
+            localPose.translate.y,
+            localPose.translate.z
+        );
+        Quaternion localRot = localPose.transformDQ;
+        Vector3 localScale = new Vector3(
+            localPose.scale.x,
+            localPose.scale.y,
+            localPose.scale.z
+        );
+
+        // Calculate object position
+        // objectPos = parentPos + parentRot * (localPos * parentScale)
+        Vector3 scaledLocal = new Vector3(
+            localPos.x * parentScale.x,
+            localPos.y * parentScale.y,
+            localPos.z * parentScale.z
+        );
+        Vector3 objectPos = parentPos + (parentRot * scaledLocal);
+
+        // Calculate object rotation
+        // objectRot = parentRot * localRot
+        Quaternion objectRot = parentRot * localRot;
+
+        // Calculate object scale
+        // objectScale = parentScale * localScale
+        Vector3 objectScale = new Vector3(
+            parentScale.x * localScale.x,
+            parentScale.y * localScale.y,
+            parentScale.z * localScale.z
+        );
+
+        // Build object pose
+        objectPose.translate = new Vector4(objectPos.x, objectPos.y, objectPos.z, 0f);
+        objectPose.transformDQ = objectRot;
+        objectPose.rotate = new Vector4(objectRot.x, objectRot.y, objectRot.z, objectRot.w);
+        objectPose.scale = new Vector4(objectScale.x, objectScale.y, objectScale.z, 1f);
+        objectPose.transformMat = Matrix4x4.TRS(objectPos, objectRot, objectScale);
+        objectPose.user = localPose.user;
+
+        localPose = objectPose;
+
+        return objectPose;
+    }
 }
