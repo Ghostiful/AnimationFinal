@@ -197,7 +197,7 @@ public static class a3_Kinematics
             activeHS.hierarchy.nodes[nodeIndex].parentIndex);
 
         // restore pose
-        SpatialPose.a3spatialPoseRestore(activeHS.localSpace.poses[nodeIndex],
+        SpatialPose.a3spatialPoseRestore(ref activeHS.localSpace.poses[nodeIndex],
             poseGroup.channel[nodeIndex], poseGroup.order[nodeIndex]);
 
         // deconcat

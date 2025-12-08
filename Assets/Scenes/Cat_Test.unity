@@ -878,6 +878,29 @@ MonoBehaviour:
   ankleConstraintL: {fileID: 2048141266}
   tailEffector: {fileID: 1503378531}
   tailConstraint: {fileID: 681696477}
+  effectors:
+  - transform: {fileID: 1461957872}
+    parentIndex: 2
+  - transform: {fileID: 557002000}
+    parentIndex: 2
+  - transform: {fileID: 1657908619}
+    parentIndex: 2
+  - transform: {fileID: 1642747402}
+    parentIndex: 2
+  - transform: {fileID: 1875592795}
+    parentIndex: 2
+  - transform: {fileID: 1092995250}
+    parentIndex: 2
+  - transform: {fileID: 326048065}
+    parentIndex: 2
+  - transform: {fileID: 2048141266}
+    parentIndex: 2
+  - transform: {fileID: 897427033}
+    parentIndex: 2
+  - transform: {fileID: 681696477}
+    parentIndex: 2
+  - transform: {fileID: 1503378531}
+    parentIndex: 2
   clipNames:
   - xbot_idle_f
   - xbot_idle_m

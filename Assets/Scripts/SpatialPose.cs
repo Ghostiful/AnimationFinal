@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public static class SpatialPose
 {
-	public static int a3spatialPoseConvert(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
+	public static int a3spatialPoseConvert(ref a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
         //Matrix4x4 Rx, Ry, Rz, R;
         //Rx = new Matrix4x4();
@@ -27,11 +27,12 @@ public static class SpatialPose
 		
 	}
 
-	public static int a3spatialPoseRestore(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
+	public static int a3spatialPoseRestore(ref a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
         spatialPose.translate = spatialPose.transformMat.GetColumn(3);
-        //Quaternion rotation = Quaternion.LookRotation(spatialPose.transformMat.GetColumn(2), spatialPose.transformMat.GetColumn(1));
+        Quaternion rotation = Quaternion.LookRotation(spatialPose.transformMat.GetColumn(2), spatialPose.transformMat.GetColumn(1));
 		spatialPose.rotate = spatialPose.transformMat.rotation.eulerAngles;
+        //spatialPose.rotate = rotation.eulerAngles;
         spatialPose.scale = new Vector4(1, 1, 1);
 		return 1;
 	}

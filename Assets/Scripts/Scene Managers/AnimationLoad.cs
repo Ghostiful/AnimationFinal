@@ -26,6 +26,7 @@ public class AnimationLoad : MonoBehaviour
     public Transform ankleConstraintL;
     public Transform tailEffector;
     public Transform tailConstraint;
+    public Bone[] effectors;
 
     [Header("Animation Clips")]
     public string[] clipNames = new string[]
@@ -123,12 +124,26 @@ public class AnimationLoad : MonoBehaviour
         //{
         //    sceneGraph.a3hierarchySetNode(i + 15, characterBones[i].parentIndex + 15, characterBones[i].transform.name);
         //}
-
-        
+        a3_HierarchyPoseGroup effectorGroup = new a3_HierarchyPoseGroup();
+        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref effectorGroup, ref sceneGraph, sceneGraph.numNodes);
+        //a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(ref effectorGroup, ref sceneGraph, effectors);
+        for (int i = 0; i < effectors.Length; i++)
+        {
+            effectorGroup.hpose[0].poses[i + 3].translate = effectors[i].transform.position;
+        }
 
         // Create scene graph state
         sceneGraphState = new a3_HierarchyState();
         a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref sceneGraphState, ref sceneGraph);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[0], effectorGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[1], effectorGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[0], sceneGraph.numNodes, effectorGroup.channel, effectorGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[1], sceneGraph.numNodes, effectorGroup.channel, effectorGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateLocalInverse(sceneGraphState);
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateObjectInverse(sceneGraphState);
+
+
+
     }
 
     void InitializeCharacterHierarchy()

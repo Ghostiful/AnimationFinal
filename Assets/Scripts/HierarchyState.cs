@@ -330,7 +330,7 @@ public static class a3_HierarchyStateFunctions
         {
             int i;
             for (i = 0; i < nodeCount; i++)
-                SpatialPose.a3spatialPoseConvert(pose_inout.poses[i], channel[i], order[i]);
+                SpatialPose.a3spatialPoseConvert(ref pose_inout.poses[i], channel[i], order[i]);
             return i;
         }
         return -1;
@@ -342,7 +342,7 @@ public static class a3_HierarchyStateFunctions
         {
             int i;
             for (i = 0; i < nodeCount; i++)
-                SpatialPose.a3spatialPoseRestore(pose_inout.poses[i], channel[i], order[i]);
+                SpatialPose.a3spatialPoseRestore(ref pose_inout.poses[i], channel[i], order[i]);
             return i;
         }
         return -1;
