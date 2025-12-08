@@ -28,7 +28,7 @@ public static class SpatialPose
 		return 1;
 	}
 
-    public static int a3spatialPoseCopy(a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_in)
+    public static int a3spatialPoseCopy(ref a3_SpatialPose spatialPose_out, a3_SpatialPose spatialPose_in)
 	{
 		spatialPose_out.rotate = spatialPose_in.rotate;
 		spatialPose_out.translate = spatialPose_in.translate;

@@ -354,7 +354,7 @@ public static class a3_HierarchyStateFunctions
         {
             int i;
             for (i = 0; i < nodeCount; i++)
-                SpatialPose.a3spatialPoseCopy(pose_out.poses[i], pose_in.poses[i]);
+                SpatialPose.a3spatialPoseCopy(ref pose_out.poses[i], pose_in.poses[i]);
             return i;
         }
         return -1;
@@ -418,6 +418,7 @@ public static class a3_HierarchyStateFunctions
             for (int i = 0; i < hposeCount; ++i)
             {
                 state_out.hpose[i] = new a3_HierarchyPose(nodeCount);
+                //a3hierarchyPoseGroupLoad(ref state_out., ref state_out.hierarchy);
                 state_out.hpose[i].hpose_index = i * nodeCount;
 
                 // Point to correct section of allPoses array
@@ -525,22 +526,24 @@ public static class a3_HierarchyStateFunctions
             poseGroup_out.hpose[0].poses[i].translate = bones[i].transform.position;
             poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.rotation.eulerAngles;
             poseGroup_out.hpose[0].poses[i].scale = bones[i].transform.localScale;
+            poseGroup_out.pose[i].translate = bones[i].transform.position;
+            poseGroup_out.pose[i].rotate = bones[i].transform.rotation.eulerAngles;
+            poseGroup_out.pose[i].scale = bones[i].transform.localScale;
         }
+        a3hierarchyPoseCopy(ref poseGroup_out.hpose[1], poseGroup_out.hpose[0], bones.Length);
+        a3hierarchyPoseConvert(ref poseGroup_out.hpose[1], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
 
         return 1;
     }
 
-    public static int a3hierarchyPoseGroupLoad(ref a3_HierarchyPoseGroup poseGroup_out, ref a3_Hierarchy hierarchy_out)
+    public static int a3hierarchyStateLoadPoseGroup(ref a3_HierarchyState hierarchyState_out, a3_HierarchyPoseGroup poseGroup, int numNodes)
     {
-        /// Hierarchy pose group
-        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref poseGroup_out, ref hierarchy_out, 6);
-        // should be happening within the create but isn't for some reason - Izzy
-
-        for (int i = 0; i < hierarchy_out.nodes.Length; i++)
+        for (int i = 0; i < numNodes; i++)
         {
-            //poseGroup_out.hpose[0].poses[i].translate = hierarchy_out.nodes[i].transform.position;
-            //poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.rotation.eulerAngles;
-            //poseGroup_out.hpose[0].poses[i].scale = bones[i].transform.localScale;
+            hierarchyState_out.hpose[0].poses[i].translate = poseGroup.hpose[0].poses[i].translate;
+            hierarchyState_out.hpose[0].poses[i].rotate = poseGroup.hpose[0].poses[i].rotate;
+            hierarchyState_out.hpose[0].poses[i].scale = poseGroup.hpose[0].poses[i].scale;
+
         }
 
         return 1;
