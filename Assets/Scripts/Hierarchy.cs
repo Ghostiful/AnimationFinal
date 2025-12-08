@@ -22,22 +22,10 @@ public struct a3_HierarchyNode
     }
 }
 
-public class a3_Hierarchy : MonoBehaviour
+public class a3_Hierarchy
 {
     public a3_HierarchyNode[] nodes;
     public int numNodes;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     //-----------------------------------------------------------------------------
     public static a3_Hierarchy a3hierarchyCreate(int numNodes, string[] names = null)

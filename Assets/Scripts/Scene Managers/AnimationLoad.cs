@@ -119,6 +119,8 @@ public class AnimationLoad : MonoBehaviour
     void InitializeCharacterHierarchy()
     {
         // Izzy put ur hierarchy loading stuff here
+        hierarchyPoseGroup_skel = new a3_HierarchyPoseGroup();
+        hierarchy_skel = new a3_Hierarchy();
         a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(hierarchyPoseGroup_skel, hierarchy_skel, characterBones);
 
     }
