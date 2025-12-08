@@ -7,12 +7,17 @@ public static class SpatialPose
 {
 	public static int a3spatialPoseConvert(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
-        Matrix4x4 Rx, Ry, Rz, R;
-        Rx.m00 = Mathf.Sin(Mathf.Deg2Rad * spatialPose.rotate.x);
-        Ry.m00 = Mathf.Sin(Mathf.Deg2Rad * spatialPose.rotate.y);
-        Rz.m00 = Mathf.Sin(Mathf.Deg2Rad * spatialPose.rotate.z);
-        R.m00 = Rx.m00 * Ry.m00;
-        spatialPose.transformMat.m00 = R.m00 * Rz.m00;
+        //Matrix4x4 Rx, Ry, Rz, R;
+        //Rx = new Matrix4x4();
+        //Ry = new Matrix4x4();
+        //Rz = new Matrix4x4();
+        //R = new Matrix4x4();
+        //Matrix4x4Extensions.SetRotateX(ref Rx, spatialPose.rotate.x);
+        //Matrix4x4Extensions.SetRotateY(ref Ry, spatialPose.rotate.y);
+        //Matrix4x4Extensions.SetRotateZ(ref Rz, spatialPose.rotate.z);
+        //R = Rx * Ry;
+        //spatialPose.transformMat = R * Rz;
+        //spatialPose.transformMat.SetColumn(3, spatialPose.translate);
 		Vector4 temp = Vector4.Normalize(spatialPose.rotate);
 
         Matrix4x4 poseMatrix = Matrix4x4.TRS(spatialPose.translate, new Quaternion(temp.x, temp.y, temp.z, temp.w), spatialPose.scale);
@@ -25,8 +30,9 @@ public static class SpatialPose
 	public static int a3spatialPoseRestore(a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
         spatialPose.translate = spatialPose.transformMat.GetColumn(3);
+        //Quaternion rotation = Quaternion.LookRotation(spatialPose.transformMat.GetColumn(2), spatialPose.transformMat.GetColumn(1));
 		spatialPose.rotate = spatialPose.transformMat.rotation.eulerAngles;
-		spatialPose.scale = spatialPose.transformMat.lossyScale;
+        spatialPose.scale = new Vector4(1, 1, 1);
 		return 1;
 	}
 
@@ -191,4 +197,116 @@ public enum a3_BasisAxis
     basis_yn = 0x11,
     basis_zn = 0x12,
     basis_invalid = 0xFF
+}
+
+
+public static class Matrix4x4Extensions
+{
+    /// <summary>
+    /// Set a Matrix4x4 to represent a rotation around the X axis
+    /// Unity uses column-major matrices like OpenGL
+    /// </summary>
+    public static Matrix4x4 SetRotateX(float degrees)
+    {
+        Matrix4x4 m = new Matrix4x4();
+
+        float c = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        float s = Mathf.Sin(degrees * Mathf.Deg2Rad);
+
+        // Set to identity first
+        m.m00 = 1f;
+        m.m11 = c;
+        m.m22 = c;
+        m.m33 = 1f;
+
+        // Set zeros
+        m.m01 = m.m02 = m.m03 = 0f;
+        m.m10 = m.m13 = 0f;
+        m.m20 = m.m23 = 0f;
+        m.m30 = m.m31 = m.m32 = 0f;
+
+        // Unity uses column-major (like OpenGL, not row-major)
+        // Column-major layout:
+        m.m12 = -s;  // [row 1, col 2]
+        m.m21 = s;   // [row 2, col 1]
+
+        return m;
+    }
+
+    /// <summary>
+    /// Set an existing Matrix4x4 to represent a rotation around the X axis
+    /// </summary>
+    public static void SetRotateX(ref Matrix4x4 m_out, float degrees)
+    {
+        float c = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        float s = Mathf.Sin(degrees * Mathf.Deg2Rad);
+
+        // Set diagonal
+        m_out.m00 = 1f;
+        m_out.m11 = c;
+        m_out.m22 = c;
+        m_out.m33 = 1f;
+
+        // Set zeros
+        m_out.m01 = m_out.m02 = m_out.m03 = 0f;
+        m_out.m10 = m_out.m13 = 0f;
+        m_out.m20 = m_out.m23 = 0f;
+        m_out.m30 = m_out.m31 = m_out.m32 = 0f;
+
+        // Set rotation components (column-major)
+        m_out.m12 = -s;
+        m_out.m21 = s;
+    }
+
+    /// <summary>
+    /// Set a Matrix4x4 to represent a rotation around the Y axis
+    /// </summary>
+    public static Matrix4x4 SetRotateY(ref Matrix4x4 m, float degrees)
+    {
+
+        float c = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        float s = Mathf.Sin(degrees * Mathf.Deg2Rad);
+
+        m.m11 = 1f;
+        m.m00 = c;
+        m.m22 = c;
+        m.m33 = 1f;
+
+        m.m01 = m.m03 = 0f;
+        m.m10 = m.m12 = m.m13 = 0f;
+        m.m21 = m.m23 = 0f;
+        m.m30 = m.m31 = m.m32 = 0f;
+
+        // Column-major
+        m.m02 = s;
+        m.m20 = -s;
+
+        return m;
+    }
+
+    /// <summary>
+    /// Set a Matrix4x4 to represent a rotation around the Z axis
+    /// </summary>
+    public static Matrix4x4 SetRotateZ(ref Matrix4x4 m, float degrees)
+    {
+
+        float c = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        float s = Mathf.Sin(degrees * Mathf.Deg2Rad);
+
+        m.m22 = 1f;
+        m.m00 = c;
+        m.m11 = c;
+        m.m33 = 1f;
+
+        m.m02 = m.m03 = 0f;
+        m.m12 = m.m13 = 0f;
+        m.m20 = m.m21 = m.m23 = 0f;
+        m.m30 = m.m31 = m.m32 = 0f;
+
+        // Column-major
+        m.m01 = -s;
+        m.m10 = s;
+
+        return m;
+    }
 }
