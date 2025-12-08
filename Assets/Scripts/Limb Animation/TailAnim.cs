@@ -12,23 +12,30 @@ public class TailAnim : LimbAnimator
     [SerializeField] Transform leftWagConstraint;
     [SerializeField] Transform rightWagConstraint;
     [SerializeField] float tailWagTime;
+    [SerializeField] Vector3 targetFallingPos;
+    [SerializeField] float tailFallingHeight;
+    [SerializeField] Transform targetJumpingPos;
 
     float tailWagTimer;
     int wagDirection; // 1 is right, -1 is left
+    float fallTimer;
+    float jumpTimer;
+    Vector3 previousEffectorPos;
 
     // Start is called before the first frame update
     void Start()
     {
         tailWagTimer = 0;
         wagDirection = 1;
+        fallTimer = 0;
+        jumpTimer = 0;
+        targetFallingPos = new Vector3(pelvisTransform.position.x, pelvisTransform.position.y + tailFallingHeight, pelvisTransform.position.z);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
         UpdateEffectorAndConstraints();
-
     }
 
     public override Vector3 FindEffectorPosition()
@@ -44,10 +51,17 @@ public class TailAnim : LimbAnimator
                 effector.transform.position = Vector3.Lerp(leftWagConstraint.position, rightWagConstraint.position, tailWagTimer);
                 break;
             case TailState.FALLING:
-
+                fallTimer += Time.deltaTime;
+                if (fallTimer > 1)
+                    fallTimer = 1;
+                targetFallingPos = new Vector3(pelvisTransform.position.x, pelvisTransform.position.y + tailFallingHeight, pelvisTransform.position.z);
+                effector.transform.position = Vector3.Lerp(previousEffectorPos, targetFallingPos, fallTimer);
                 break;
             case TailState.JUMPING:
-
+                jumpTimer += Time.deltaTime;
+                if (jumpTimer > 1)
+                    jumpTimer = 1;
+                effector.transform.position = Vector3.Lerp(previousEffectorPos, targetJumpingPos.position, jumpTimer);
                 break;
             case TailState.WALKING:
 
@@ -95,6 +109,22 @@ public class TailAnim : LimbAnimator
         }
         effector.transform.position = FindEffectorPosition();
     }
+
+    public void SwitchTailState(TailState tailState)
+    {
+        state = tailState;
+        previousEffectorPos = effector.transform.position;
+        switch (state)
+        {
+            case TailState.FALLING:
+                fallTimer = 0;
+                break;
+            case TailState.JUMPING:
+                jumpTimer = 0;
+                break;
+            
+        }
+    }
 }
 
 public enum TailState
@@ -103,5 +133,6 @@ public enum TailState
     FALLING,
     JUMPING,
     RUNNING,
-    WALKING
+    WALKING,
+    TRANSITIONING
 }
