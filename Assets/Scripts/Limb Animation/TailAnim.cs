@@ -8,13 +8,10 @@ public class TailAnim : LimbAnimator
     public TailState state;
 
     [SerializeField] Transform pelvisTransform;
-    [SerializeField] float tailWagRadius;
     [SerializeField] Transform leftWagConstraint;
     [SerializeField] Transform rightWagConstraint;
-    [SerializeField] float tailWagTime;
-    [SerializeField] Vector3 targetFallingPos;
-    [SerializeField] float tailFallingHeight;
-    [SerializeField] Transform targetJumpingPos;
+    [SerializeField] Transform tailFallConstraint;
+    [SerializeField] Transform tailJumpConstraint;
 
     float tailWagTimer;
     int wagDirection; // 1 is right, -1 is left
@@ -29,7 +26,6 @@ public class TailAnim : LimbAnimator
         wagDirection = 1;
         fallTimer = 0;
         jumpTimer = 0;
-        targetFallingPos = new Vector3(pelvisTransform.position.x, pelvisTransform.position.y + tailFallingHeight, pelvisTransform.position.z);
     }
 
     // Update is called once per frame
@@ -43,32 +39,33 @@ public class TailAnim : LimbAnimator
         switch (state)
         {
             case TailState.BASE:
-                tailWagTimer += Time.deltaTime * wagDirection;
-                if (tailWagTimer > 1)
+                if (tailWagTimer > 1 || tailWagTimer < 0)
                 {
                     wagDirection *= -1;
                 }
-                effector.transform.position = Vector3.Lerp(leftWagConstraint.position, rightWagConstraint.position, tailWagTimer);
-                break;
+                tailWagTimer += Time.deltaTime * wagDirection;
+                
+                return Vector3.Lerp(leftWagConstraint.position, rightWagConstraint.position, tailWagTimer);
             case TailState.FALLING:
                 fallTimer += Time.deltaTime;
                 if (fallTimer > 1)
                     fallTimer = 1;
-                targetFallingPos = new Vector3(pelvisTransform.position.x, pelvisTransform.position.y + tailFallingHeight, pelvisTransform.position.z);
-                effector.transform.position = Vector3.Lerp(previousEffectorPos, targetFallingPos, fallTimer);
-                break;
+                return Vector3.Lerp(previousEffectorPos, tailFallConstraint.transform.position, fallTimer);
             case TailState.JUMPING:
                 jumpTimer += Time.deltaTime;
                 if (jumpTimer > 1)
                     jumpTimer = 1;
-                effector.transform.position = Vector3.Lerp(previousEffectorPos, targetJumpingPos.position, jumpTimer);
-                break;
+                return Vector3.Lerp(previousEffectorPos, tailJumpConstraint.transform.position, jumpTimer);
             case TailState.WALKING:
 
                 break;
             case TailState.RUNNING:
 
                 break;
+            default:
+                return transform.position;
+                
+
         }
 
         // fallback case
@@ -94,6 +91,8 @@ public class TailAnim : LimbAnimator
             case ConstraintType.TAIL_IK:
 
                 break;
+            default:
+                return transform.position;
         }
 
         // fallback case
