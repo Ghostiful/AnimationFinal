@@ -104,7 +104,7 @@ public static int a3spatialPoseReset(a3_SpatialPose spatialPose)
 }
 }
 
-public struct a3_SpatialPose
+public class a3_SpatialPose
 {
     public Matrix4x4 transformMat;
     public Quaternion transformDQ;
@@ -112,6 +112,16 @@ public struct a3_SpatialPose
     public Vector4 scale;
     public Vector4 translate;
     public Vector4 user;
+
+    public a3_SpatialPose()
+    {
+        transformMat = Matrix4x4.identity;
+        transformDQ = Quaternion.identity;
+        rotate = Vector4.zero;
+        scale = Vector4.one;
+        translate = new Vector4(0, 0, 0, 1);
+        user = Vector4.zero;
+    }
 }
 
 public enum a3_SpatialPoseChannel
