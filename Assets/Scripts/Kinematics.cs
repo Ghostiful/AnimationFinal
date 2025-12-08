@@ -197,6 +197,7 @@ public static class a3_Kinematics
             activeHS.hierarchy.nodes[nodeIndex].parentIndex);
 
         // restore pose
+        //Debug.Log(nodeIndex);
         SpatialPose.a3spatialPoseRestore(ref activeHS.localSpace.poses[nodeIndex],
             poseGroup.channel[nodeIndex], poseGroup.order[nodeIndex]);
 

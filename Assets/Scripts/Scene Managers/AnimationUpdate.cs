@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class AnimationUpdate
 {
-    public static int ApplyEffectors(a3_HierarchyState sceneGraphState, a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup)
+    public static int ApplyEffectors(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup)
     {
         if (sceneGraphState == null || activeHS == null || baseHS == null || poseGroup == null)
         {
@@ -61,8 +61,12 @@ public static class AnimationUpdate
         return 1;
     }
 
-    public static void UpdateAnimation()
+    public static void UpdateAnimation(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones)
     {
-
+        for (int i = 0; i < bones.Length; i++)
+        {
+            bones[i].transform.position = activeHS.animPose.poses[i].translate;
+            bones[i].transform.rotation = new Quaternion(activeHS.animPose.poses[i].rotate.x, activeHS.animPose.poses[i].rotate.y, activeHS.animPose.poses[i].rotate.z, 1);
+        }
     }
 }

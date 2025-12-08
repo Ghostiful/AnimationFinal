@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -30,10 +31,12 @@ public static class SpatialPose
 	public static int a3spatialPoseRestore(ref a3_SpatialPose spatialPose, a3_SpatialPoseChannel channel, a3_SpatialPoseEulerOrder order)
 	{
         spatialPose.translate = spatialPose.transformMat.GetColumn(3);
-        Quaternion rotation = Quaternion.LookRotation(spatialPose.transformMat.GetColumn(2), spatialPose.transformMat.GetColumn(1));
+        //Quaternion rotation = Quaternion.LookRotation(spatialPose.transformMat.GetColumn(2), spatialPose.transformMat.GetColumn(1));
 		spatialPose.rotate = spatialPose.transformMat.rotation.eulerAngles;
         //spatialPose.rotate = rotation.eulerAngles;
-        spatialPose.scale = new Vector4(1, 1, 1);
+        spatialPose.rotate.w = 1;
+        //Debug.Log(spatialPose.rotate.x + ", " + spatialPose.rotate.y + ", " + spatialPose.rotate.z + ", " + spatialPose.rotate.w);
+        spatialPose.scale = new Vector4(1, 1, 1, 1);
 		return 1;
 	}
 
@@ -126,7 +129,7 @@ public class a3_SpatialPose
     {
         transformMat = Matrix4x4.identity;
         transformDQ = Quaternion.identity;
-        rotate = Vector4.zero;
+        rotate = new Vector4(0, 0, 0, 1);
         scale = Vector4.one;
         translate = new Vector4(0, 0, 0, 1);
         user = Vector4.zero;

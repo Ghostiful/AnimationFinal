@@ -525,11 +525,14 @@ public static class a3_HierarchyStateFunctions
         {
             poseGroup_out.hpose[0].poses[i].translate = bones[i].transform.position;
             poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.rotation.eulerAngles;
+            poseGroup_out.hpose[0].poses[i].rotate.w = 1;
             poseGroup_out.hpose[0].poses[i].scale = bones[i].transform.localScale;
             poseGroup_out.pose[i].translate = bones[i].transform.position;
             poseGroup_out.pose[i].rotate = bones[i].transform.rotation.eulerAngles;
+            poseGroup_out.pose[i].rotate.w = 1;
             poseGroup_out.pose[i].scale = bones[i].transform.localScale;
         }
+        a3hierarchyPoseConvert(ref poseGroup_out.hpose[0], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
         a3hierarchyPoseCopy(ref poseGroup_out.hpose[1], poseGroup_out.hpose[0], bones.Length);
         a3hierarchyPoseConvert(ref poseGroup_out.hpose[1], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
 

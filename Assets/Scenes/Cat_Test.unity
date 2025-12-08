@@ -176,6 +176,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9044896593469587049, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -216,9 +220,109 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7668232019799874679, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7668232019799874679, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7668232019799874679, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6827885205384073525, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6582216826110540968, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6582216826110540968, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5610738748275010727, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5610738748275010727, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2883292818079838860, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2883292818079838860, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2883292818079838860, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
       propertyPath: m_Name
       value: cat_rigged
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218903134005157966, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218903134005157966, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2834002765110269724, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2834002765110269724, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5999502365930878764, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621358018080124983, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7235574685716981304, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7235574685716981304, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7510791549122019342, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634561907601606989, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7925752775574973465, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7925752775574973465, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8488917885193422433, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9001241474995706753, guid: a98b6b4f2647bfc49b57dceff884d9cc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -879,27 +983,27 @@ MonoBehaviour:
   tailEffector: {fileID: 1503378531}
   tailConstraint: {fileID: 681696477}
   effectors:
-  - transform: {fileID: 1461957872}
-    parentIndex: 2
-  - transform: {fileID: 557002000}
-    parentIndex: 2
   - transform: {fileID: 1657908619}
     parentIndex: 2
   - transform: {fileID: 1642747402}
     parentIndex: 2
-  - transform: {fileID: 1875592795}
-    parentIndex: 2
   - transform: {fileID: 1092995250}
+    parentIndex: 2
+  - transform: {fileID: 1875592795}
     parentIndex: 2
   - transform: {fileID: 326048065}
     parentIndex: 2
-  - transform: {fileID: 2048141266}
+  - transform: {fileID: 1461957872}
     parentIndex: 2
   - transform: {fileID: 897427033}
     parentIndex: 2
-  - transform: {fileID: 681696477}
+  - transform: {fileID: 557002000}
+    parentIndex: 2
+  - transform: {fileID: 2048141266}
     parentIndex: 2
   - transform: {fileID: 1503378531}
+    parentIndex: 2
+  - transform: {fileID: 681696477}
     parentIndex: 2
   clipNames:
   - xbot_idle_f
