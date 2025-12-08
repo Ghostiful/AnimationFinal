@@ -12,6 +12,7 @@ public class AnimationLoad : MonoBehaviour
     public SkinnedMeshRenderer characterRenderer;
     public Transform cameraTransform;
     public Transform characterRoot;
+    public Bone[] characterBones;
 
     [Header("IK Effectors")]
     public Transform neckLookAtCtrl;

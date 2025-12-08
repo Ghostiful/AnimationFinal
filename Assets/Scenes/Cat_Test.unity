@@ -449,6 +449,137 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &932528450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 932528452}
+  - component: {fileID: 932528451}
+  m_Layer: 0
+  m_Name: AnimLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &932528451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932528450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87f9fb8f8bfff444a85591b221041879, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useCharacter: 1
+  forceDisableStreaming: 0
+  characterRenderer: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  characterRoot: {fileID: 0}
+  characterBones:
+  - transform: {fileID: 83768290}
+    parentIndex: 1
+  - transform: {fileID: 83768291}
+    parentIndex: -1
+  - transform: {fileID: 83768292}
+    parentIndex: 1
+  - transform: {fileID: 83768289}
+    parentIndex: 0
+  - transform: {fileID: 83768288}
+    parentIndex: 3
+  - transform: {fileID: 83768287}
+    parentIndex: 4
+  - transform: {fileID: 83768286}
+    parentIndex: 5
+  - transform: {fileID: 83768285}
+    parentIndex: 6
+  - transform: {fileID: 83768284}
+    parentIndex: 0
+  - transform: {fileID: 83768283}
+    parentIndex: 8
+  - transform: {fileID: 83768282}
+    parentIndex: 9
+  - transform: {fileID: 83768281}
+    parentIndex: 10
+  - transform: {fileID: 83768280}
+    parentIndex: 11
+  - transform: {fileID: 83768279}
+    parentIndex: 0
+  - transform: {fileID: 83768278}
+    parentIndex: 13
+  - transform: {fileID: 83768277}
+    parentIndex: 14
+  - transform: {fileID: 83768276}
+    parentIndex: 15
+  - transform: {fileID: 83768275}
+    parentIndex: 14
+  - transform: {fileID: 83768274}
+    parentIndex: 17
+  - transform: {fileID: 83768273}
+    parentIndex: 2
+  - transform: {fileID: 83768272}
+    parentIndex: 19
+  - transform: {fileID: 83768271}
+    parentIndex: 20
+  - transform: {fileID: 83768270}
+    parentIndex: 21
+  - transform: {fileID: 83768269}
+    parentIndex: 22
+  - transform: {fileID: 83768302}
+    parentIndex: 1
+  - transform: {fileID: 83768301}
+    parentIndex: 24
+  - transform: {fileID: 83768300}
+    parentIndex: 25
+  - transform: {fileID: 83768299}
+    parentIndex: 26
+  - transform: {fileID: 83768298}
+    parentIndex: 27
+  - transform: {fileID: 83768297}
+    parentIndex: 1
+  - transform: {fileID: 83768296}
+    parentIndex: 29
+  - transform: {fileID: 83768295}
+    parentIndex: 30
+  - transform: {fileID: 83768294}
+    parentIndex: 31
+  - transform: {fileID: 83768293}
+    parentIndex: 32
+  neckLookAtCtrl: {fileID: 0}
+  wristEffectorR: {fileID: 0}
+  wristConstraintR: {fileID: 0}
+  wristEffectorL: {fileID: 0}
+  wristConstraintL: {fileID: 0}
+  ankleEffectorR: {fileID: 0}
+  ankleConstraintR: {fileID: 0}
+  ankleEffectorL: {fileID: 0}
+  ankleConstraintL: {fileID: 0}
+  clipNames:
+  - xbot_idle_f
+  - xbot_idle_m
+  - xbot_idle_pistol
+--- !u!4 &932528452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932528450}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.044352293, y: 0.16096556, z: -0.22320974}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1616109027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,3 +841,4 @@ SceneRoots:
   - {fileID: 1793099527}
   - {fileID: 1731543206}
   - {fileID: 83768267}
+  - {fileID: 932528452}

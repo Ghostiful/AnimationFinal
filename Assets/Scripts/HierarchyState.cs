@@ -502,6 +502,7 @@ public static class a3_HierarchyStateFunctions
     // still needed - function to load bone transforms as an array from the cat prefab
     public static int a3hierarchyPoseGroupLoad(a3_HierarchyPoseGroup poseGroup_out, a3_Hierarchy hierarchy_out, Bone[] bones)
     {
+
         /// Hierarchy
         hierarchy_out = a3_Hierarchy.a3hierarchyCreate(bones.Length);
 
@@ -527,6 +528,7 @@ public static class a3_HierarchyStateFunctions
     }
 }
 
+[System.Serializable]
 public struct Bone
 {
     public Transform transform;
