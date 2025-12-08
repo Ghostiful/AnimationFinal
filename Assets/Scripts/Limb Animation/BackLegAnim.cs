@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class FrontLegAnim : LimbAnimator
+public class BackLegAnim : LimbAnimator
 {
-    
-
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +15,25 @@ public class FrontLegAnim : LimbAnimator
     void Update()
     {
         UpdateEffectorAndConstraints();
+    }
+
+    public override Vector3 FindConstraintPosition(a3_Constraint constraint)
+    {
+        switch (constraint.type)
+        {
+            case ConstraintType.PAW:
+
+                break;
+            case ConstraintType.ANKLE:
+
+                break;
+            case ConstraintType.KNEE:
+
+                break;
+        }
+
+        // fallback case
+        return constraint.constraint.transform.position;
     }
 
     public override Vector3 FindEffectorPosition()
@@ -30,24 +48,4 @@ public class FrontLegAnim : LimbAnimator
         // fallback case
         return transform.position;
     }
-
-    public override Vector3 FindConstraintPosition(a3_Constraint constraint)
-    {
-        switch (constraint.type)
-        {
-            case ConstraintType.PAW:
-
-                break;
-            case ConstraintType.WRIST:
-
-                break;
-            case ConstraintType.ELBOW:
-
-                break;
-        }
-
-        // fallback case
-        return constraint.constraint.transform.position;
-    }
-    
 }
