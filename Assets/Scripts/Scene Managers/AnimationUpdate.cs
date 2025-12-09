@@ -25,24 +25,24 @@ public static class AnimationUpdate
         /// Front Limbs
         // Right
         a3_Basis basis_wrist = BasisUtil.a3basisInit(a3_BasisAxis.basis_zp, a3_BasisAxis.basis_yp);
-        a3_Basis basis_elbow = BasisUtil.a3basisInit(a3_BasisAxis.basis_xn, a3_BasisAxis.basis_yp);
+        a3_Basis basis_elbow = BasisUtil.a3basisInit(a3_BasisAxis.basis_yn, a3_BasisAxis.basis_xp);
         a3_Basis basis_shoulder = basis_elbow;
         a3_Kinematics.a3kinematicsUpdateLimbIK(sceneGraphState, activeHS, baseHS, poseGroup, 0,
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_wristEff_r_ctrl"),
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_wristCon_r_ctrl"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_right_4_end"),
-            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_right_4"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_right_3"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_right_1"),
             basis_obj, basis_wrist, basis_elbow, basis_shoulder);
         // Left
-        basis_elbow = BasisUtil.a3basisInit(a3_BasisAxis.basis_xp, a3_BasisAxis.basis_yn);
+        basis_elbow = BasisUtil.a3basisInit(a3_BasisAxis.basis_yn, a3_BasisAxis.basis_xp);
         basis_shoulder = basis_elbow;
         a3_Kinematics.a3kinematicsUpdateLimbIK(sceneGraphState, activeHS, baseHS, poseGroup, 0,
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_wristEff_l_ctrl"),
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_wristCon_l_ctrl"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_left_4_end"),
-            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_left_4"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_left_3"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_front_left_1"),
             basis_obj, basis_wrist, basis_elbow, basis_shoulder);
 
         /// Back Limbs
@@ -55,16 +55,16 @@ public static class AnimationUpdate
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_ankleEff_r_ctrl"),
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_ankleCon_r_ctrl"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_right_4_end"),
-            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_right_4"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_right_3"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_right_1"),
             basis_obj, basis_ankle, basis_knee, basis_hip);
         // Left
         a3_Kinematics.a3kinematicsUpdateLimbIK(sceneGraphState, activeHS, baseHS, poseGroup, 0,
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_ankleEff_l_ctrl"),
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_ankleCon_l_ctrl"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_left_4_end"),
-            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_left_4"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_left_3"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_left_1"),
             basis_obj, basis_ankle, basis_knee, basis_hip);
 
         /// Tail
@@ -76,7 +76,7 @@ public static class AnimationUpdate
             sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_tailCon_ctrl"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_4_end"),
             activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_3"),
-            activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_2"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_1"),
             basis_obj, basis_tailEnd, basis_tailMiddle, basis_tailBase);
 
         return 1;
