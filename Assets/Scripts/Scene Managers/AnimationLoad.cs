@@ -42,6 +42,7 @@ public class AnimationLoad : MonoBehaviour
 
     private a3_Hierarchy hierarchy_skel;
     private a3_HierarchyPoseGroup hierarchyPoseGroup_skel;
+    private a3_HierarchyPoseGroup effectorPoseGroup;
 
     private a3_HierarchyState hierarchyState_skel_ik;
     private a3_HierarchyState hierarchyState_skel_fk;
@@ -74,8 +75,16 @@ public class AnimationLoad : MonoBehaviour
 
     private void Update()
     {
+        for (int i = 0; i < effectors.Length; i++)
+        {
+            effectorPoseGroup.hpose[0].poses[i + 3].translate = effectors[i].transform.position;
+            effectorPoseGroup.hpose[0].poses[i + 3].rotate = effectors[i].transform.rotation.eulerAngles;
+            effectorPoseGroup.hpose[0].poses[i + 3].rotate.w = 1;
+            effectorPoseGroup.hpose[0].poses[i + 3].scale = effectors[i].transform.localScale;
+        }
         AnimationUpdate.DoAnimationPipeline(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_fk, ref hierarchyState_skel_ik, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
         AnimationUpdate.UpdateSkeleton(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
+        
     }
 
     public void LoadAnimationSystem()
@@ -125,26 +134,26 @@ public class AnimationLoad : MonoBehaviour
         //{
         //    sceneGraph.a3hierarchySetNode(i + 15, characterBones[i].parentIndex + 15, characterBones[i].transform.name);
         //}
-        a3_HierarchyPoseGroup effectorGroup = new a3_HierarchyPoseGroup();
-        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref effectorGroup, ref sceneGraph, sceneGraph.numNodes);
+        effectorPoseGroup = new a3_HierarchyPoseGroup();
+        a3_HierarchyStateFunctions.a3hierarchyPoseGroupCreate(ref effectorPoseGroup, ref sceneGraph, sceneGraph.numNodes);
         //a3_HierarchyStateFunctions.a3hierarchyPoseGroupLoad(ref effectorGroup, ref sceneGraph, effectors);
         for (int i = 0; i < effectors.Length; i++)
         {
-            effectorGroup.hpose[0].poses[i + 3].translate = effectors[i].transform.position;
-            effectorGroup.hpose[0].poses[i + 3].rotate = effectors[i].transform.rotation.eulerAngles;
-            effectorGroup.hpose[0].poses[i + 3].rotate.w = 1;
-            effectorGroup.hpose[0].poses[i + 3].scale = effectors[i].transform.localScale;
+            effectorPoseGroup.hpose[0].poses[i + 3].translate = effectors[i].transform.position;
+            effectorPoseGroup.hpose[0].poses[i + 3].rotate = effectors[i].transform.rotation.eulerAngles;
+            effectorPoseGroup.hpose[0].poses[i + 3].rotate.w = 1;
+            effectorPoseGroup.hpose[0].poses[i + 3].scale = effectors[i].transform.localScale;
         }
 
         // Create scene graph state
         sceneGraphState = new a3_HierarchyState();
         a3_HierarchyStateFunctions.a3hierarchyStateCreate(ref sceneGraphState, ref sceneGraph);
-        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[0], effectorGroup.hpose[0], sceneGraph.numNodes);
-        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[1], effectorGroup.hpose[0], sceneGraph.numNodes);
-        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[2], effectorGroup.hpose[0], sceneGraph.numNodes);
-        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[0], sceneGraph.numNodes, effectorGroup.channel, effectorGroup.order);
-        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[1], sceneGraph.numNodes, effectorGroup.channel, effectorGroup.order);
-        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[2], sceneGraph.numNodes, effectorGroup.channel, effectorGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[0], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[1], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[2], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[0], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[1], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[2], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
         a3_HierarchyStateFunctions.a3hierarchyStateUpdateLocalInverse(sceneGraphState);
         a3_HierarchyStateFunctions.a3hierarchyStateUpdateObjectInverse(sceneGraphState);
 

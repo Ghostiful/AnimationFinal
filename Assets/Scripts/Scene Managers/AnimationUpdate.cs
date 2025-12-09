@@ -16,7 +16,7 @@ public static class AnimationUpdate
         }
 
         // Neck look-at
-        a3_Kinematics.a3kinematicsUpdateLookAtIK(ref sceneGraphState, ref activeHS, ref baseHS, ref poseGroup, 0, 3, activeHS.hierarchy.a3hierarchyGetNodeIndex("neck"));
+        a3_Kinematics.a3kinematicsUpdateLookAtIK(ref sceneGraphState, ref activeHS, ref baseHS, ref poseGroup, 0, sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_neckLookat_ctrl"), activeHS.hierarchy.a3hierarchyGetNodeIndex("neck"));
 
         ///// Front Limbs
         //// Right
