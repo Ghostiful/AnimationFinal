@@ -522,8 +522,9 @@ public static class a3_HierarchyStateFunctions
 
         for (int i = 0; i < bones.Length; i++)
         {
-            poseGroup_out.hpose[0].poses[i].translate = bones[i].transform.position;
-            poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.rotation.eulerAngles;
+            poseGroup_out.hpose[0].poses[i].translate = bones[i].transform.localPosition;
+            poseGroup_out.hpose[0].poses[i].translate.w = 1;
+            poseGroup_out.hpose[0].poses[i].rotate = bones[i].transform.localRotation.eulerAngles;
             poseGroup_out.hpose[0].poses[i].rotate.w = 1;
             poseGroup_out.hpose[0].poses[i].scale = bones[i].transform.localScale;
             poseGroup_out.pose[i].translate = bones[i].transform.position;
@@ -532,29 +533,6 @@ public static class a3_HierarchyStateFunctions
             poseGroup_out.pose[i].scale = bones[i].transform.localScale;
         }
         a3hierarchyPoseConvert(ref poseGroup_out.hpose[0], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
-        a3hierarchyPoseCopy(ref poseGroup_out.hpose[1], poseGroup_out.hpose[0], bones.Length);
-        a3hierarchyPoseConvert(ref poseGroup_out.hpose[1], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
-
-        for (int i = 0; i < bones.Length; i++)
-        {
-            if (bones[i].parentIndex == -1)
-            {
-                continue;
-            }
-            SpatialPoseSpaceConverter.ConvertWorldToLocalDirect(ref poseGroup_out.hpose[1].poses[i], ref poseGroup_out.hpose[0].poses[bones[i].parentIndex]);
-        }
-        a3hierarchyPoseConvert(ref poseGroup_out.hpose[1], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
-
-        a3hierarchyPoseCopy(ref poseGroup_out.hpose[2], poseGroup_out.hpose[1], bones.Length);
-        for (int i = 0; i < bones.Length; i++)
-        {
-            if (bones[i].parentIndex == -1)
-            {
-                continue;
-            }
-            SpatialPoseSpaceConverter.ConvertLocalToObjectDirect(ref poseGroup_out.hpose[2].poses[i], ref poseGroup_out.hpose[1].poses[bones[i].parentIndex]);
-        }
-        a3hierarchyPoseConvert(ref poseGroup_out.hpose[2], hierarchy_out.numNodes, poseGroup_out.channel, poseGroup_out.order);
 
 
         return 1;
