@@ -210,10 +210,10 @@ public static class a3_Kinematics
     public static void a3kinematicsUpdateLookAtIK(ref a3_HierarchyState sceneGraphState,
             ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup,
             int sceneGraphIndex_hierarchyObj, int sceneGraphIndex_effector,
-            int hierarchyObjIndex_affected)
+            int hierarchyObjIndex_affected, a3_Basis basis_hierarchyObj, a3_Basis basis_affected)
     {
-        Matrix4x4 m_hierarchyObj_4x4 = Matrix4x4.identity;
-        Matrix4x4 m_affected_4x4 = Matrix4x4.identity;
+        Matrix4x4 m_hierarchyObj_4x4 = BasisUtil.BasisToMatrix4x4(basis_hierarchyObj);
+        Matrix4x4 m_affected_4x4 = BasisUtil.BasisToMatrix4x4(basis_affected);
 
         if ((sceneGraphState == null || activeHS == null || baseHS == null || poseGroup == null) ||
             (activeHS.hierarchy != baseHS.hierarchy) ||

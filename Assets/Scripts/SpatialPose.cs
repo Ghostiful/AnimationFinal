@@ -314,3 +314,199 @@ public static class Matrix4x4Extensions
         return m;
     }
 }
+
+public struct a3_Basis
+{
+    public ushort value;
+
+    // Invalid basis constant
+    public static readonly a3_Basis Invalid = new a3_Basis { value = 0xFFFF };
+
+    public a3_Basis(ushort val)
+    {
+        value = val;
+    }
+
+    // Implicit conversions
+    public static implicit operator a3_Basis(ushort v) => new a3_Basis(v);
+    public static implicit operator ushort(a3_Basis basis) => basis.value;
+
+    public override string ToString() => $"Basis(0x{value:X4})";
+}
+
+public static class BasisUtil
+{
+    public static a3_Basis a3basisInit(a3_BasisAxis fwd, a3_BasisAxis up)
+    {
+        // Validate axes
+        if (!a3basisAxisValid(fwd) || !a3basisAxisValid(up))
+            return a3_Basis.Invalid;
+
+        if (a3basisAxisIndex(fwd) == a3basisAxisIndex(up))
+            return a3_Basis.Invalid;
+
+        // Pack forward in lower 8 bits, up in upper 8 bits
+        ushort result = (ushort)(((byte)fwd & 0xFF) | (((byte)up & 0xFF) << 8));
+        return new a3_Basis(result);
+    }
+
+    public static bool a3basisAxisValid(a3_BasisAxis axis)
+    {
+        byte axisValue = (byte)axis;
+
+        if (axisValue == 0x00 || axisValue == 0x01 || axisValue == 0x02)
+            return true; // Positive X, Y, or Z
+
+        if (axisValue == 0x10 || axisValue == 0x11 || axisValue == 0x12)
+            return true; // Negative X, Y, or Z
+
+        return false;
+    }
+
+    public static int a3basisAxisIndex(a3_BasisAxis axis)
+    {
+        return (byte)axis & 0x0F;
+    }
+
+    public static Matrix4x4 BasisToMatrix4x4(a3_Basis basis)
+    {
+        if (basis.value == a3_Basis.Invalid.value)
+        {
+            Debug.LogWarning("Cannot convert invalid basis to matrix");
+            return Matrix4x4.identity;
+        }
+
+        // Get the three basis vectors
+        Vector3 right = GetRightVector(basis);
+        Vector3 up = GetUpVector(basis);
+        Vector3 forward = GetForwardVector(basis);
+
+        // Create matrix with basis vectors as columns
+        Matrix4x4 matrix = new Matrix4x4();
+
+        // Column 0: Right vector
+        matrix.m00 = right.x;
+        matrix.m10 = right.y;
+        matrix.m20 = right.z;
+        matrix.m30 = 0f;
+
+        // Column 1: Up vector
+        matrix.m01 = up.x;
+        matrix.m11 = up.y;
+        matrix.m21 = up.z;
+        matrix.m31 = 0f;
+
+        // Column 2: Forward vector
+        matrix.m02 = forward.x;
+        matrix.m12 = forward.y;
+        matrix.m22 = forward.z;
+        matrix.m32 = 0f;
+
+        // Column 3: Translation (identity - no translation)
+        matrix.m03 = 0f;
+        matrix.m13 = 0f;
+        matrix.m23 = 0f;
+        matrix.m33 = 1f;
+
+        return matrix;
+    }
+
+    public static bool a3basisAxisIsNegative(a3_BasisAxis axis)
+    {
+        return ((byte)axis & 0xF0) == 0x10;
+    }
+
+    public static bool a3basisAxisIsPositive(a3_BasisAxis axis)
+    {
+        return ((byte)axis & 0xF0) == 0x00;
+    }
+
+    public static a3_BasisAxis a3basisGetForward(a3_Basis basis)
+    {
+        return (a3_BasisAxis)(basis.value & 0xFF);
+    }
+
+    public static a3_BasisAxis a3basisGetUp(a3_Basis basis)
+    {
+        return (a3_BasisAxis)((basis.value >> 8) & 0xFF);
+    }
+
+    private static bool DetermineCrossProductSign(int fwdIdx, bool fwdNeg, int upIdx, bool upNeg)
+    {
+        // Calculate base sign from indices
+        bool basePositive = false;
+
+        if ((fwdIdx == 0 && upIdx == 1) || // X × Y = Z
+            (fwdIdx == 1 && upIdx == 2) || // Y × Z = X
+            (fwdIdx == 2 && upIdx == 0))   // Z × X = Y
+        {
+            basePositive = true;
+        }
+        else if ((fwdIdx == 1 && upIdx == 0) || // Y × X = -Z
+                 (fwdIdx == 2 && upIdx == 1) || // Z × Y = -X
+                 (fwdIdx == 0 && upIdx == 2))   // X × Z = -Y
+        {
+            basePositive = false;
+        }
+
+        // XOR with negations (negative axis flips the result)
+        return basePositive ^ fwdNeg ^ upNeg;
+    }
+
+    public static a3_BasisAxis a3basisGetRight(a3_Basis basis)
+    {
+        a3_BasisAxis fwd = a3basisGetForward(basis);
+        a3_BasisAxis up = a3basisGetUp(basis);
+
+        int fwdIdx = a3basisAxisIndex(fwd);
+        int upIdx = a3basisAxisIndex(up);
+
+        // Calculate third axis index (the remaining axis)
+        // X=0, Y=1, Z=2, so 3 - fwdIdx - upIdx gives the third
+        int rightIdx = 3 - fwdIdx - upIdx;
+
+        // Determine sign based on right-hand rule
+        bool fwdNeg = a3basisAxisIsNegative(fwd);
+        bool upNeg = a3basisAxisIsNegative(up);
+
+        // Right = Forward × Up
+        bool rightNeg = DetermineCrossProductSign(fwdIdx, fwdNeg, upIdx, upNeg);
+
+        // Build the axis value
+        byte rightAxis = (byte)rightIdx;
+        if (rightNeg)
+            rightAxis |= 0x10;  // Set negative flag
+
+        return (a3_BasisAxis)rightAxis;
+    }
+
+    public static Vector3 AxisToVector(a3_BasisAxis axis)
+    {
+        int index = a3basisAxisIndex(axis);
+        bool negative = a3basisAxisIsNegative(axis);
+        float sign = negative ? -1f : 1f;
+
+        switch (index)
+        {
+            case 0: return new Vector3(sign, 0, 0); // X
+            case 1: return new Vector3(0, sign, 0); // Y
+            case 2: return new Vector3(0, 0, sign); // Z
+            default: return Vector3.zero;
+        }
+    }
+
+    public static Vector3 GetForwardVector(a3_Basis basis)
+    {
+        return AxisToVector(a3basisGetForward(basis));
+    }
+
+    public static Vector3 GetUpVector(a3_Basis basis)
+    {
+        return AxisToVector(a3basisGetUp(basis));
+    }
+
+    public static Vector3 GetRightVector(a3_Basis basis)
+    {
+        return AxisToVector(a3basisGetRight(basis));
+    }
+}

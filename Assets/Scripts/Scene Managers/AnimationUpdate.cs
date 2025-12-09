@@ -15,6 +15,8 @@ public static class AnimationUpdate
             return -1;
         }
 
+        a3_Basis basis_obj = BasisUtil.a3basisInit(a3_BasisAxis.basis_yp, a3_BasisAxis.basis_zp);
+
         // Neck look-at
         a3_Kinematics.a3kinematicsUpdateLookAtIK(ref sceneGraphState, ref activeHS, ref baseHS, ref poseGroup, 0, sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_neckLookat_ctrl"), activeHS.hierarchy.a3hierarchyGetNodeIndex("neck"));
 
