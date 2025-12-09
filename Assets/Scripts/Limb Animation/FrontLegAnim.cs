@@ -20,15 +20,15 @@ public class FrontLegAnim : LimbAnimator
 
     public override Vector3 FindEffectorPosition()
     {
-        RaycastHit hit;
-        LayerMask layerMask = LayerMask.GetMask("Ground");
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, layerMask))
-        {
-            return hit.point;
-        }
+        //RaycastHit hit;
+        //LayerMask layerMask = LayerMask.GetMask("Ground");
+        //if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, layerMask))
+        //{
+        //    return hit.point;
+        //}
 
         // fallback case
-        return transform.position;
+        return effector.transform.position;
     }
 
     public override Vector3 FindConstraintPosition(a3_Constraint constraint)

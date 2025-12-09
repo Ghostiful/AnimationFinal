@@ -130,7 +130,7 @@ public static class a3_Kinematics
         }
     }
 
-    public static void a3kinematicsUpdateHierarchyStateIK(a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup)
+    public static void a3kinematicsUpdateHierarchyStateIK(ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup)
     {
         if (activeHS.hierarchy == baseHS.hierarchy &&
             activeHS.hierarchy == poseGroup.hierarchy)
