@@ -67,13 +67,17 @@ public static class AnimationUpdate
             activeHS.hierarchy.a3hierarchyGetNodeIndex("leg_back_left_3"),
             basis_obj, basis_ankle, basis_knee, basis_hip);
 
-        ///// Tail
-        //a3_Kinematics.a3kinematicsUpdateLimbIK(sceneGraphState, activeHS, baseHS, poseGroup, 0,
-        //    sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_tailEff_ctrl"),
-        //    sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_tailCon_ctrl"),
-        //    activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_4_end"),
-        //    activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_3"),
-        //    activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_2"));
+        /// Tail
+        a3_Basis basis_tailEnd = BasisUtil.a3basisInit(a3_BasisAxis.basis_yp, a3_BasisAxis.basis_zp);
+        a3_Basis basis_tailMiddle = BasisUtil.a3basisInit(a3_BasisAxis.basis_yn, a3_BasisAxis.basis_xp);
+        a3_Basis basis_tailBase = basis_tailMiddle;
+        a3_Kinematics.a3kinematicsUpdateLimbIK(sceneGraphState, activeHS, baseHS, poseGroup, 0,
+            sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_tailEff_ctrl"),
+            sceneGraphState.hierarchy.a3hierarchyGetNodeIndex("scene_skeleton_tailCon_ctrl"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_4_end"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_3"),
+            activeHS.hierarchy.a3hierarchyGetNodeIndex("tail_2"),
+            basis_obj, basis_tailEnd, basis_tailMiddle, basis_tailBase);
 
         return 1;
     }

@@ -36,40 +36,40 @@ public class TailAnim : LimbAnimator
 
     public override Vector3 FindEffectorPosition()
     {
-        switch (state)
-        {
-            case TailState.BASE:
-                if (tailWagTimer > 1 || tailWagTimer < 0)
-                {
-                    wagDirection *= -1;
-                }
-                tailWagTimer += Time.deltaTime * wagDirection;
+        //switch (state)
+        //{
+        //    case TailState.BASE:
+        //        if (tailWagTimer > 1 || tailWagTimer < 0)
+        //        {
+        //            wagDirection *= -1;
+        //        }
+        //        tailWagTimer += Time.deltaTime * wagDirection;
                 
-                return Vector3.Lerp(leftWagConstraint.position, rightWagConstraint.position, tailWagTimer);
-            case TailState.FALLING:
-                fallTimer += Time.deltaTime;
-                if (fallTimer > 1)
-                    fallTimer = 1;
-                return Vector3.Lerp(previousEffectorPos, tailFallConstraint.transform.position, fallTimer);
-            case TailState.JUMPING:
-                jumpTimer += Time.deltaTime;
-                if (jumpTimer > 1)
-                    jumpTimer = 1;
-                return Vector3.Lerp(previousEffectorPos, tailJumpConstraint.transform.position, jumpTimer);
-            case TailState.WALKING:
+        //        return Vector3.Lerp(leftWagConstraint.position, rightWagConstraint.position, tailWagTimer);
+        //    case TailState.FALLING:
+        //        fallTimer += Time.deltaTime;
+        //        if (fallTimer > 1)
+        //            fallTimer = 1;
+        //        return Vector3.Lerp(previousEffectorPos, tailFallConstraint.transform.position, fallTimer);
+        //    case TailState.JUMPING:
+        //        jumpTimer += Time.deltaTime;
+        //        if (jumpTimer > 1)
+        //            jumpTimer = 1;
+        //        return Vector3.Lerp(previousEffectorPos, tailJumpConstraint.transform.position, jumpTimer);
+        //    case TailState.WALKING:
 
-                break;
-            case TailState.RUNNING:
+        //        break;
+        //    case TailState.RUNNING:
 
-                break;
-            default:
-                return transform.position;
+        //        break;
+        //    default:
+        //        return effector.transform.position;
                 
 
-        }
+        //}
 
         // fallback case
-        return transform.position;
+        return effector.transform.position;
     }
 
     public override Vector3 FindConstraintPosition(a3_Constraint constraint)

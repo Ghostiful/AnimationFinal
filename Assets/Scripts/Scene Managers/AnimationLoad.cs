@@ -85,10 +85,13 @@ public class AnimationLoad : MonoBehaviour
 
         a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[0], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
         a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[1], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
-        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[2], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        //a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[2], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
         a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[0], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
         a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[1], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
-        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[2], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+        //a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[2], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+        a3_Kinematics.a3kinematicsSolveForwardPartial(ref sceneGraphState, 0, sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateLocalInverse(sceneGraphState);
+        a3_HierarchyStateFunctions.a3hierarchyStateUpdateObjectInverse(sceneGraphState);
 
 
         AnimationUpdate.DoAnimationPipeline(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_fk, ref hierarchyState_skel_ik, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
