@@ -157,22 +157,6 @@ public static class a3_KeyframeAnimation
         return -1;
     }
 
-    public static int a3clipPoolRelease(a3_ClipPool clipPool)
-    {
-        if (clipPool != null && clipPool.clip != null)
-        {
-            int clipCount = clipPool.clipCount;
-            clipPool.clip = null;
-            clipPool.keyframe = null;
-            clipPool.sample = null;
-            clipPool.clipCount = 0;
-            clipPool.keyframeCount = 0;
-            clipPool.sampleCount = 0;
-            return clipCount;
-        }
-        return -1;
-    }
-
     public static int a3clipTransitionInit(ref a3_ClipTransition transition, a3_ClipTransitionFlag transitionFlag, int offset, a3_Clip clip)
     {
         if (clip != null)

@@ -92,10 +92,6 @@ public static class KeyframeAnimationController
         return -1;
     }
 
-    /// <summary>
-    /// a3clipControllerInit
-    /// Initialize clip controller
-    /// </summary>
     public static int a3clipControllerInit(a3_ClipController clipCtrl_out, string ctrlName, a3_ClipPool clipPool, int clipIndex_pool, int playback_step, double playback_stepPerSec)
     {
         int ret = a3clipControllerSetClip(clipCtrl_out, clipPool, clipIndex_pool, playback_step, playback_stepPerSec);

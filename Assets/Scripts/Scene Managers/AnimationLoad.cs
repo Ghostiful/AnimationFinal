@@ -293,9 +293,6 @@ public class AnimationLoad : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Initialize blend tree hierarchy and states
-    /// </summary>
     void InitializeBlendTree()
     {
         // Create blend tree hierarchy
