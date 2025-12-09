@@ -527,6 +527,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useCharacter: 1
   forceDisableStreaming: 0
+  usePhysics: 0
   characterRenderer: {fileID: 699207911312048666}
   cameraTransform: {fileID: 0}
   characterRoot: {fileID: 7925752775500652498}

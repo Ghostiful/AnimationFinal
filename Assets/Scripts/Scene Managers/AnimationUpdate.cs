@@ -82,13 +82,25 @@ public static class AnimationUpdate
         return 1;
     }
 
-    public static void UpdateSkeleton(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones)
+    public static void UpdateSkeleton(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones, bool usePysics)
     {
-        for (int i = 0; i < bones.Length; i++)
+        if (usePysics)
         {
-            bones[i].transform.localPosition = activeHS.animPose.poses[i].translate;
-            bones[i].transform.localRotation = new Quaternion(activeHS.animPose.poses[i].rotate.x, activeHS.animPose.poses[i].rotate.y, activeHS.animPose.poses[i].rotate.z, 1);
+            for (int i = 0; i < bones.Length; i++)
+            {
+                bones[i].transform.localPosition = activeHS.animPose.poses[i].translate;
+                bones[i].transform.localRotation = new Quaternion(activeHS.animPose.poses[i].rotate.x, activeHS.animPose.poses[i].rotate.y, activeHS.animPose.poses[i].rotate.z, 1);
+            }
         }
+        else
+        {
+            for (int i = 0; i < bones.Length; i++)
+            {
+                bones[i].transform.position = activeHS.animPose.poses[i].translate;
+                bones[i].transform.rotation = new Quaternion(activeHS.animPose.poses[i].rotate.x, activeHS.animPose.poses[i].rotate.y, activeHS.animPose.poses[i].rotate.z, 1);
+            }
+        }
+        
     }
 
     public static void DoAnimationPipeline(ref a3_HierarchyState sceneGraphState, ref a3_HierarchyState activeHS, ref a3_HierarchyState activeHS_fk, ref a3_HierarchyState activeHS_ik, ref a3_HierarchyState baseHS, ref a3_HierarchyPoseGroup poseGroup, ref Bone[] bones)

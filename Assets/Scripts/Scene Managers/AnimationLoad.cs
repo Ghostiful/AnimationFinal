@@ -7,6 +7,7 @@ public class AnimationLoad : MonoBehaviour
     [Header("Animation Data")]
     public bool useCharacter = true;
     public bool forceDisableStreaming = false;
+    public bool usePhysics = true;
 
     [Header("Scene Objects")]
     public SkinnedMeshRenderer characterRenderer;
@@ -95,7 +96,7 @@ public class AnimationLoad : MonoBehaviour
 
 
         AnimationUpdate.DoAnimationPipeline(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_fk, ref hierarchyState_skel_ik, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
-        AnimationUpdate.UpdateSkeleton(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
+        AnimationUpdate.UpdateSkeleton(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones, usePhysics);
         
     }
 
