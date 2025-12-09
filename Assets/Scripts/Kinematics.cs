@@ -277,12 +277,13 @@ public static class a3_Kinematics
     public static void a3kinematicsUpdateLimbIK(a3_HierarchyState sceneGraphState,
         a3_HierarchyState activeHS, a3_HierarchyState baseHS, a3_HierarchyPoseGroup poseGroup,
         int sceneGraphIndex_hierarchyObj, int sceneGraphIndex_effector_end, int sceneGraphIndex_constraint,
-        int hierarchyObjIndex_affected_end, int hierarchyObjIndex_affected_hinge, int hierarchyObjIndex_affected_base)
+        int hierarchyObjIndex_affected_end, int hierarchyObjIndex_affected_hinge, int hierarchyObjIndex_affected_base,
+        a3_Basis basis_hierarchyObj, a3_Basis basis_affected_end, a3_Basis basis_affected_hinge, a3_Basis basis_affected_base)
     {
-        Matrix4x4 m_hierarchyObj_4x4 = Matrix4x4.identity;
-        Matrix4x4 m_affected_end_4x4 = Matrix4x4.identity;
-        Matrix4x4 m_affected_hinge_4x4 = Matrix4x4.identity;
-        Matrix4x4 m_affected_base_4x4 = Matrix4x4.identity;
+        Matrix4x4 m_hierarchyObj_4x4 = BasisUtil.BasisToMatrix4x4(basis_hierarchyObj);
+        Matrix4x4 m_affected_end_4x4 = BasisUtil.BasisToMatrix4x4(basis_affected_end);
+        Matrix4x4 m_affected_hinge_4x4 = BasisUtil.BasisToMatrix4x4(basis_affected_hinge);
+        Matrix4x4 m_affected_base_4x4 = BasisUtil.BasisToMatrix4x4(basis_affected_base);
 
         if ((sceneGraphState == null || activeHS == null || baseHS == null || poseGroup == null) ||
             (activeHS.hierarchy != baseHS.hierarchy) ||

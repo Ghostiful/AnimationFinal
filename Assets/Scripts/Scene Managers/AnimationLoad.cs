@@ -82,6 +82,15 @@ public class AnimationLoad : MonoBehaviour
             effectorPoseGroup.hpose[0].poses[i + 3].rotate.w = 1;
             effectorPoseGroup.hpose[0].poses[i + 3].scale = effectors[i].transform.localScale;
         }
+
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[0], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[1], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseCopy(ref sceneGraphState.hpose[2], effectorPoseGroup.hpose[0], sceneGraph.numNodes);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[0], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[1], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+        a3_HierarchyStateFunctions.a3hierarchyPoseConvert(ref sceneGraphState.hpose[2], sceneGraph.numNodes, effectorPoseGroup.channel, effectorPoseGroup.order);
+
+
         AnimationUpdate.DoAnimationPipeline(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_fk, ref hierarchyState_skel_ik, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
         AnimationUpdate.UpdateSkeleton(ref sceneGraphState, ref hierarchyState_skel_final, ref hierarchyState_skel_base, ref hierarchyPoseGroup_skel, ref characterBones);
         
